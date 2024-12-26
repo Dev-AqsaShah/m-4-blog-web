@@ -27,7 +27,7 @@ const BlogItem: React.FC<BlogItemType> = ({
   const fallbackImage = '/assets/blog1.jpeg';
 
   return (
-    <div className="max-w-[330px] sm:max-w-[300px] border border-white">
+    <div className="max-w-[330px] sm:max-w-[300px] border border-white shadow-[0_0_15px_5px_rgba(255,255,255,1)]">
       {/* Wrap the Image in the Link component */}
       <Link href={`/blogs/${id}`} passHref>
         {/* Check if the image is valid */}
@@ -39,7 +39,7 @@ const BlogItem: React.FC<BlogItemType> = ({
               alt={title || 'Blog Image'}
               width={400}
               height={400}
-              className="border border-white cursor-pointer transform transition duration-500 hover:scale-110"
+              className="border border-white cursor-pointer transform transition duration-500 hover:scale-110 "
             />
           ) : (
             // If the image is a StaticImageData import

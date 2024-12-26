@@ -45,7 +45,7 @@ useEffect(()=>{
       </div>
 
       {/* Blog Items Section */}
-      <div className="flex flex-wrap justify-around gap-2 gap-y-10 mb-16 xl:mx-24">
+      <div className="flex flex-wrap justify-around gap-2 gap-y-10 mb-16 xl:mx-24 ">
         {filteredData.map((item, index) => (
           <BlogItem
             key={index}

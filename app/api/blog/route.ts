@@ -4,7 +4,6 @@ import { writeFile } from "fs/promises";
 import mongoose from "mongoose";
 import BlogModel from "@/lib/models/BlogModel";
 
-
 // MongoDB connection
 const MONGODB_URI = "mongodb+srv://aqsashah:Aqsashah120@cluster0.vrr7c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
@@ -20,41 +19,37 @@ const ConnectDB = async () => {
     }
 };
 
-//api endpoint to get all blogs
-
-
+// API endpoint to get all blogs
 export async function GET(request: NextRequest) {
-  // Connect to the database
-  await connectToDatabase();
+    // Connect to the database
+    await ConnectDB(); // Use the correct function name
 
-  try {
-    // Extract `blogId` from the query parameters
-    const { searchParams } = new URL(request.url); // Get the URL of the request
-    const blogId = searchParams.get("blogId"); // Extract blogId from the query string
+    try {
+        // Extract `blogId` from the query parameters
+        const { searchParams } = new URL(request.url); // Get the URL of the request
+        const blogId = searchParams.get("blogId"); // Extract blogId from the query string
 
-    if (blogId) {
-      // Fetch a specific blog by ID
-      const blog = await BlogModel.findById(blogId);
+        if (blogId) {
+            // Fetch a specific blog by ID
+            const blog = await BlogModel.findById(blogId);
 
-      if (!blog) {
-        return NextResponse.json({ error: "Blog not found" }, { status: 404 });
-      }
+            if (!blog) {
+                return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+            }
 
-      return NextResponse.json({ blog });
-    } else {
-      // Fetch all blogs if no `blogId` is provided
-      const blogs = await BlogModel.find({});
-      return NextResponse.json({ blogs });
+            return NextResponse.json({ blog });
+        } else {
+            // Fetch all blogs if no `blogId` is provided
+            const blogs = await BlogModel.find({});
+            return NextResponse.json({ blogs });
+        }
+    } catch (error) {
+        console.error("Error fetching blogs:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
-  } catch (error) {
-    console.error("Error fetching blogs:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-  }
 }
 
-
-// api endpoint for uploading blogs
-
+// API endpoint for uploading blogs
 export async function POST(request: NextRequest) {
     try {
         // Connect to the database
@@ -73,7 +68,7 @@ export async function POST(request: NextRequest) {
         const imageByteData = await image.arrayBuffer();
         const buffer = Buffer.from(imageByteData);
         const imageName = `${timestamp}_${image.name}`;
-        const path = `./public/${imageName}`;
+        const path = `./public/${imageName}`; // Ensure the path points to the public folder
 
         await writeFile(path, buffer);
 

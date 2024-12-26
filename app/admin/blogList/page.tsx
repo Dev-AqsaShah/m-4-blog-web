@@ -8,19 +8,20 @@ interface Blog {
   id: string; // Blog ID
   author: string; // Author name
   title: string; // Blog title
-  authorImg: string; // Author's image URL
 }
 
 const Page: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [error, setError] = useState<string | null>(null); // Error state
 
   // Fetch blogs from the API
   const fetchBlogs = async () => {
     try {
       const response = await axios.get("/api/blog");
       setBlogs(response.data.blogs);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching blogs:", error);
+      setError("An error occurred while fetching the blogs. Please try again later.");
     }
   };
 
@@ -41,6 +42,7 @@ const Page: React.FC = () => {
   return (
     <div className="p-5 sm:p-12">
       <h1 className="text-2xl font-bold text-gray-800 mb-5">All Blogs</h1>
+      {error && <p className="text-red-500">{error}</p>} {/* Show error if exists */}
       <div className="overflow-x-auto shadow-md rounded-lg border">
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-100">
@@ -57,7 +59,6 @@ const Page: React.FC = () => {
                 id={blog.id}
                 author={blog.author}
                 title={blog.title}
-                authorImg={blog.authorImg}
                 onDelete={deleteBlog}
               />
             ))}

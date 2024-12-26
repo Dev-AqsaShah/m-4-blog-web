@@ -1,13 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Slider from "react-slick";
 import Image from "next/image";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { FaArrowRightLong } from "react-icons/fa6";
+import axios from "axios";
+import { toast } from "react-toastify";
+
+interface SlideData {
+  id: number;
+  img: string;
+}
 
 const Header: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+
   const settings = {
     dots: true,
     infinite: true,
@@ -20,12 +29,29 @@ const Header: React.FC = () => {
     arrows: false,
   };
 
-  const slideData = [
+  const slideData: SlideData[] = [
     { id: 0, img: "/Assets/home1.jpg" },
     { id: 1, img: "/Assets/artsblog1.webp" },
     { id: 2, img: "/Assets/home3.jpeg" },
     { id: 3, img: "/Assets/home4.webp" },
   ];
+
+  const onSubmitHandler = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      const response = await axios.post("/api/email", formData);
+      if (response.data.success) {
+        toast.success(response.data.msg);
+        setEmail("");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      toast.error("Error submitting the form. Please try again.");
+    }
+  };
 
   return (
     <div className="relative h-screen overflow-hidden">
@@ -53,7 +79,7 @@ const Header: React.FC = () => {
       <div className="relative z-20 h-full flex flex-col justify-between text-white px-5 md:px-12 lg:px-24">
         {/* Header Section */}
         <div className="flex justify-between items-center pt-4 sm:pt-6 lg:pt-8">
-          <img
+          <Image
             src="/Assets/logo.png"
             alt="Aqsa Life Dairy"
             width={130}
@@ -87,10 +113,12 @@ const Header: React.FC = () => {
 
         {/* Subscription Section */}
         <form
+          onSubmit={onSubmitHandler}
           className="flex justify-between max-w-[500px] mx-auto mb-6 lg:mb-10 border shadow-[0_0_15px_5px_rgba(255,255,255,1)] border-white rounded-full overflow-hidden"
-          action=""
         >
           <input
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
             type="email"
             placeholder="Enter your email"
             className="pl-4 h-12 flex-1 text-black outline-none"
