@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { FaArrowRightLong } from "react-icons/fa6";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 interface SlideData {
   id: number;
@@ -86,10 +87,12 @@ const Header: React.FC = () => {
             height={80}
             className="w-[90px] sm:w-[100px] md:w-[110px]"
           />
+          <Link href="/admin">
           <button className="flex items-center gap-2 font-medium py-2 px-4 sm:py-3 sm:px-6 border shadow-[0_0_15px_5px_rgba(255,255,255,1)] border-white bg-blue-900 text-white hover:bg-black hover:text-white transition-all transform hover:scale-105 rounded-full">
             Get Started
             <FaArrowRightLong />
           </button>
+          </Link>
         </div>
 
         {/* Main Content */}
