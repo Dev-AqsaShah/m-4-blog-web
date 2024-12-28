@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import BlogModel from "@/lib/models/BlogModel";
 
 // MongoDB connection
-const MONGODB_URI = "mongodb+srv://aqsashah:Aqsashah120@cluster0.vrr7c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const MONGODB_URI = process.env.MONGO_URI!
 
 const ConnectDB = async () => {
     if (mongoose.connection.readyState === 1) return; // If already connected, do nothing
