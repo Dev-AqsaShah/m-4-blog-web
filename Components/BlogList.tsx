@@ -3,34 +3,46 @@ import { blog_data } from './Details'; // Ensure this path is correct
 import BlogItem from './BlogItem'; // Ensure this path is correct
 import axios from 'axios';
 
+// Define the Blog type
+interface Blog {
+  id: number;
+  image: string; // Adjust according to your API response
+  title: string;
+  description: string;
+  category: string;
+  author: string;
+}
 
 const BlogList = () => {
-  const [filteredData, setFilteredData] = useState(blog_data);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [filteredData, setFilteredData] = useState<Blog[]>([]);
 
-  const filterByCategory = (category: string) => {
-    if (category === 'All') {
-      setFilteredData(blog_data);
-    } else {
-      setFilteredData(blog_data.filter(item => item.category === category));
+  // Fetch blogs from the API
+  const fetchBlogs = async () => {
+    try {
+      const response = await axios.get('/api/blog');
+      setBlogs(response.data.blogs);
+      setFilteredData(response.data.blogs); // Initialize filteredData with fetched data
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
     }
   };
 
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
 
-const [blog,setBlogs] =useState([]);
-const fetchBlogs = async () =>{
-
-const response = await axios.get("/api/blog");
-setBlogs(response.data.blogs);
-console.log(response.data.blogs);
-}
-
-useEffect(()=>{
-  fetchBlogs();
-},[])
-
+  // Filter blogs by category
+  const filterByCategory = (category: string) => {
+    if (category === 'All') {
+      setFilteredData(blogs);
+    } else {
+      setFilteredData(blogs.filter((item) => item.category === category));
+    }
+  };
 
   return (
-    <div className="bg-gradient-to-b from-blue-900 to-black min-h-screen pt-1 pb-1 ">
+    <div className="bg-gradient-to-b from-blue-900 to-black min-h-screen pt-1 pb-1">
       {/* Button Section */}
       <div className="flex justify-center flex-wrap gap-10 my-8 text-white">
         {['All', 'Technology', 'Traveling', 'Animals', 'Plants', 'Arts', 'Lifestyle'].map((category) => (
@@ -45,12 +57,12 @@ useEffect(()=>{
       </div>
 
       {/* Blog Items Section */}
-      <div className="flex flex-wrap justify-around gap-2 gap-y-10 mb-16 xl:mx-24 ">
-        {filteredData.map((item, index) => (
+      <div className="flex flex-wrap justify-around gap-2 gap-y-10 mb-16 xl:mx-24">
+        {filteredData.map((item) => (
           <BlogItem
-            key={index}
+            key={item.id}
             id={item.id}
-            image={item.Image}  // Check if 'Image' is correct
+            image={item.image} // Use camelCase
             title={item.title}
             description={item.description}
             category={item.category}
