@@ -17,9 +17,9 @@ const Page: React.FC = () => {
   // Fetch blogs from the API
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get("/api/blog");
+      const response = await axios.get<{ blogs: Blog[] }>("/api/blog");
       setBlogs(response.data.blogs);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error fetching blogs:", error);
       setError("An error occurred while fetching the blogs. Please try again later.");
     }
