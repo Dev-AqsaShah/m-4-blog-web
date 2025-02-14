@@ -26,26 +26,13 @@ export async function POST(request) {
     }
 
     // Save email to the database
-//     const emailData = { email };
-//     await EmailModel.create(emailData);
-
-//     return NextResponse.json({ success: true, msg: "Email subscribed successfully" });
-//   } catch (error) {
-//     console.error("Error in POST request:", error);
-//     return NextResponse.json({ success: false, msg: "Failed to subscribe email" }, { status: 500 });
-//   }
-// }
-
-const emailData = { email };
+    const emailData = { email };
     await EmailModel.create(emailData);
 
     return NextResponse.json({ success: true, msg: "Email subscribed successfully" });
   } catch (error) {
-    console.error("Error in POST request:", error); // ✅ Logs the error properly
-    return NextResponse.json(
-      { success: false, msg: "Failed to subscribe email" },
-      { status: 500 }
-    );
+    console.error("Error in POST request:", error);
+    return NextResponse.json({ success: false, msg: "Failed to subscribe email" }, { status: 500 });
   }
 }
 
