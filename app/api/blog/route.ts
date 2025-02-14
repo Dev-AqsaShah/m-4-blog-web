@@ -11,7 +11,7 @@ if (!MONGODB_URI) {
   throw new Error("MongoDB URI is not defined in environment variables");
 }
 
-const ConnectDB = async () => {
+const connectDB = async () => {
   if (mongoose.connection.readyState === 1) return; // If already connected, skip
 
   try {
@@ -28,7 +28,7 @@ const ConnectDB = async () => {
 // API endpoint to get all blogs or a specific blog
 export async function GET(request: NextRequest) {
   try {
-    await ConnectDB();
+    await connectDB();
 
     const { searchParams } = new URL(request.url);
     const blogId = searchParams.get("blogId");
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
 // API endpoint to upload blogs
 export async function POST(request: NextRequest) {
   try {
-    await ConnectDB();
+    await connectDB();
 
     const formData = await request.formData();
     const timestamp = Date.now();
@@ -81,9 +81,9 @@ export async function POST(request: NextRequest) {
     const description = formData.get("description");
     const category = formData.get("category");
     const author = formData.get("author");
-    const authorImg = formData.get("authorImg");
+    const authorImage = formData.get("authorImage");
 
-    if (!title || !description || !category || !author || !authorImg) {
+    if (!title || !description || !category || !author || !authorImage) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -96,10 +96,9 @@ export async function POST(request: NextRequest) {
       description: description.toString(),
       category: category.toString(),
       author: author.toString(),
-      image: imageName,
-      authorImg: authorImg.toString(),
+      image: imageName, // Saved image path
+      authorImage: authorImage ? authorImage.toString() : "", // Allow empty string
     };
-
     await BlogModel.create(blogData);
     console.log("Blog Saved");
 
@@ -110,5 +109,31 @@ export async function POST(request: NextRequest) {
       { error: "Failed to process blog post" },
       { status: 500 }
     );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    await connectDB();
+    const { searchParams } = request.nextUrl; // Correct way in Next.js
+    const blogId = searchParams.get("id"); // Extract blog ID from query params
+
+    console.log("Received delete request for blog ID:", blogId); // Debugging log
+
+    if (!blogId) {
+      return NextResponse.json({ success: false, error: "Missing blog ID" }, { status: 400 });
+    }
+
+    // Find and delete the blog post
+    const deletedBlog = await BlogModel.findByIdAndDelete(blogId);
+
+    if (!deletedBlog) {
+      return NextResponse.json({ success: false, error: "Blog not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, msg: "Blog deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting blog:", error);
+    return NextResponse.json({ success: false, error: "Failed to delete blog" }, { status: 500 });
   }
 }

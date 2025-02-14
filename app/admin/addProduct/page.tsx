@@ -4,8 +4,10 @@ import Image from "next/image";
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const Page: React.FC = () => {
+  const router = useRouter();
   const [image, setImage] = useState<File | null>(null);
   const [data, setData] = useState({
     title: "",
@@ -33,11 +35,12 @@ const Page: React.FC = () => {
     formData.append("description", data.description);
     formData.append("category", data.category);
     formData.append("author", data.author);
-    formData.append("authorImg", data.authorImg);
+    formData.append("authorImage", data.authorImg); // Rename to "authorImage"
+  
     if (image) {
       formData.append("image", image);
     }
-
+  
     try {
       const response = await axios.post("/api/blog", formData);
       if (response.data.success) {
@@ -50,6 +53,7 @@ const Page: React.FC = () => {
           author: "Aqsa Shah",
           authorImg: "/author.jpeg",
         });
+        router.push("/admin/blogList");
       } else {
         toast.error("Error submitting the form");
       }
