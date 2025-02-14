@@ -8,10 +8,7 @@ export interface IEmail extends Document {
 
 // Define the schema
 const EmailSchema: Schema<IEmail> = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-  },
+  email: { type: String, required: true, unique: true },
   date: {
     type: Date,
     default: Date.now,

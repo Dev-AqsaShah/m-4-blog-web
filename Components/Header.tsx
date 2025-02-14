@@ -39,13 +39,18 @@ const Header: React.FC = () => {
 
   const onSubmitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+  
+    if (!email.trim()) {
+      toast.error("Please enter a valid email.");
+      return;
+    }
+  
     try {
-      const formData = new FormData();
-      formData.append("email", email);
-      const response = await axios.post("/api/email", formData);
+      const response = await axios.post("/api/email", { email });
+  
       if (response.data.success) {
-        toast.success(response.data.msg);
-        setEmail("");
+        toast.success(response.data.message);
+        setEmail(""); // Clear input after success
       } else {
         toast.error("Something went wrong. Please try again.");
       }
@@ -53,7 +58,6 @@ const Header: React.FC = () => {
       toast.error("Error submitting the form. Please try again.");
     }
   };
-
   return (
     <div className="relative h-screen overflow-hidden">
       {/* Background Image Slider */}
@@ -88,10 +92,10 @@ const Header: React.FC = () => {
             className="w-[90px] sm:w-[100px] md:w-[110px]"
           />
           <Link href="/admin">
-          <button className="flex items-center gap-2 font-medium py-2 px-4 sm:py-3 sm:px-6 border shadow-[0_0_15px_5px_rgba(255,255,255,1)] border-white bg-blue-900 text-white hover:bg-black hover:text-white transition-all transform hover:scale-105 rounded-full">
-            Get Started
-            <FaArrowRightLong />
-          </button>
+            <button className="flex items-center gap-2 font-medium py-2 px-4 sm:py-3 sm:px-6 border shadow-[0_0_15px_5px_rgba(255,255,255,1)] border-white bg-blue-900 text-white hover:bg-black hover:text-white transition-all transform hover:scale-105 rounded-full">
+              Get Started
+              <FaArrowRightLong />
+            </button>
           </Link>
         </div>
 
@@ -115,24 +119,27 @@ const Header: React.FC = () => {
         </div>
 
         {/* Subscription Section */}
-        <form
-          onSubmit={onSubmitHandler}
-          className="flex justify-between max-w-[500px] mx-auto mb-6 lg:mb-10 border shadow-[0_0_15px_5px_rgba(255,255,255,1)] border-white rounded-full overflow-hidden"
-        >
-          <input
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            type="email"
-            placeholder="Enter your email"
-            className="pl-4 h-12 flex-1 text-black outline-none"
-          />
-          <button
-            type="submit"
-            className="bg-blue-900 text-white px-6 sm:px-8 py-3 hover:bg-black transition-all "
+        <div className="mt-8 mb-6 lg:mb-10">
+          <form
+            onSubmit={onSubmitHandler}
+            className="flex justify-between max-w-[500px] mx-auto border shadow-[0_0_15px_5px_rgba(255,255,255,1)] border-white rounded-full overflow-hidden"
           >
-            Subscribe
-          </button>
-        </form>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="pl-4 h-12 flex-1 text-black outline-none"
+              required
+            />
+            <button
+              type="submit"
+              className="bg-blue-900 text-white px-6 sm:px-8 py-3 hover:bg-black transition-all"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

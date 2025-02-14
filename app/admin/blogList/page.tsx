@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import BlogTableItem from "@/Components/adminComponents/BlogTableItem";
+import { toast } from "react-toastify";
 
 interface Blog {
-  id: string; // Blog ID
+  _id: string; // Blog ID
   author: string; // Author name
   title: string; // Blog title
 }
@@ -26,12 +27,28 @@ const Page: React.FC = () => {
   };
 
   // Delete a blog by ID
-  const deleteBlog = async (id: string) => {
+  const deleteBlog = async (mongoId: string) => {
+    console.log("Deleting blog with ID:", mongoId); // Debugging log
+  
+    if (!mongoId) {
+      toast.error("Blog ID is missing");
+      return;
+    }
+  
     try {
-      await axios.delete(`/api/blog/${id}`);
-      setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== id)); // Update state
+      const response = await axios.delete(`/api/blog`, {
+        params: { id: mongoId },
+      });
+  
+      if (response.data.success) {
+        toast.success(response.data.msg);
+        fetchBlogs(); // Refresh blog list
+      } else {
+        toast.error("Error deleting blog.");
+      }
     } catch (error) {
       console.error("Error deleting blog:", error);
+      toast.error("Error deleting blog.");
     }
   };
 
@@ -55,8 +72,8 @@ const Page: React.FC = () => {
           <tbody>
             {blogs.map((blog) => (
               <BlogTableItem
-                key={blog.id}
-                id={blog.id}
+                key={blog._id}
+                id={blog._id}
                 author={blog.author}
                 title={blog.title}
                 onDelete={deleteBlog}
