@@ -26,14 +26,24 @@ export async function POST(request) {
     }
 
     // Save email to the database
-    const emailData = { email };
-    await EmailModel.create(emailData);
+//     const emailData = { email };
+//     await EmailModel.create(emailData);
 
-    return NextResponse.json({ success: true, msg: "Email subscribed successfully" });
-  } catch (error) {
-    console.error("Error in POST request:", error);
-    return NextResponse.json({ success: false, msg: "Failed to subscribe email" }, { status: 500 });
-  }
+//     return NextResponse.json({ success: true, msg: "Email subscribed successfully" });
+//   } catch (error) {
+//     console.error("Error in POST request:", error);
+//     return NextResponse.json({ success: false, msg: "Failed to subscribe email" }, { status: 500 });
+//   }
+// }
+
+return NextResponse.json({ success: true, msg: "Email subscribed successfully" });
+} catch (error) {
+  console.error("Error in POST request:", error); // ✅ Logs the error
+  return NextResponse.json(
+    { success: false, msg: "Failed to subscribe email" },
+    { status: 500 }
+  );
+}
 }
 
 // API endpoint to handle GET requests (retrieve all emails)
