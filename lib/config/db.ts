@@ -16,15 +16,22 @@ export const ConnectDB = async () => {
   }
 
   try {
+    console.log("🚀 Connecting to MongoDB...");
+    
+    // ✅ Set keepAlive globally
+    mongoose.set("strictQuery", false);
+    mongoose.set("bufferCommands", false);
+    
     await mongoose.connect(MONGODB_URI, {
-      dbName: "blogDatabase", // Ensure database name is specified
-      serverSelectionTimeoutMS: 5000, // Quick failure if DB is unreachable
-      socketTimeoutMS: 45000, // Prevents long delays in queries
+      dbName: "blogDatabase",
+      maxPoolSize: 10, // Helps keep the connection alive
+      serverSelectionTimeoutMS: 10000, // 10s timeout
+      socketTimeoutMS: 60000, // 60s socket timeout
     });
 
-    console.log("DB Connected");
+    console.log("✅ MongoDB Connected");
   } catch (error) {
-    console.error("MongoDB Connection Error:", error);
+    console.error("❌ MongoDB Connection Error:", error);
     throw new Error("Failed to connect to MongoDB");
   }
 };
