@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import mongoose from "mongoose";
 import EmailModel from "@/lib/models/EmailModel"; 
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
 const MONGODB_URI = process.env.MONGO_URI as string; // ✅ Ensure type safety
 if (!MONGODB_URI) {
   throw new Error("MongoDB URI is not defined");

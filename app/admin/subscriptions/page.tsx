@@ -12,31 +12,38 @@ interface EmailData {
 
 const Page: React.FC = () => {
   const [emails, setEmails] = useState<EmailData[]>([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
+
+  // Ensure API URL is correctly assigned
+  const API_URL = process.env.NEXT_PUBLIC_BASE_URL
+    ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/email`
+    : "/api/email"; // Fallback in case of missing env variable
+
+  console.log("API URL:", API_URL); // Debugging
 
   // Fetch emails from API
   const fetchEmails = async () => {
     try {
-      const response = await axios.get("/api/email");
+      const response = await axios.get(API_URL);
       setEmails(response.data.emails);
     } catch (error) {
       console.error("Error fetching emails:", error);
       toast.error("Failed to fetch emails.");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
   // Delete email by ID
   const deleteEmail = async (mongoId: string) => {
     try {
-      const response = await axios.delete("/api/email", {
+      const response = await axios.delete(API_URL, {
         params: { id: mongoId },
       });
 
       if (response.data.success) {
         toast.success(response.data.msg);
-        fetchEmails(); // Refresh email list
+        fetchEmails();
       } else {
         toast.error("Error deleting email.");
       }
@@ -52,7 +59,7 @@ const Page: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Display loading state
+    return <div>Loading...</div>;
   }
 
   return (
@@ -62,12 +69,8 @@ const Page: React.FC = () => {
         <table className="w-full text-sm text-gray-500">
           <thead className="text-xs text-left text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3">
-                Email Subscription
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Action
-              </th>
+              <th scope="col" className="px-6 py-3">Email Subscription</th>
+              <th scope="col" className="px-6 py-3">Action</th>
             </tr>
           </thead>
           <tbody>

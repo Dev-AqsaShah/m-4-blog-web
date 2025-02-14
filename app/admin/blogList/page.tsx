@@ -15,10 +15,17 @@ const Page: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [error, setError] = useState<string | null>(null); // Error state
 
+  // Get API base URL from .env
+  const API_URL = process.env.NEXT_PUBLIC_BASE_URL
+    ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/blog`
+    : "/api/blog"; // Fallback in case env variable is missing
+
+  console.log("API URL:", API_URL); // Debugging log
+
   // Fetch blogs from the API
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get<{ blogs: Blog[] }>("/api/blog");
+      const response = await axios.get<{ blogs: Blog[] }>(API_URL);
       setBlogs(response.data.blogs);
     } catch (error) {
       console.error("Error fetching blogs:", error);
@@ -29,17 +36,17 @@ const Page: React.FC = () => {
   // Delete a blog by ID
   const deleteBlog = async (mongoId: string) => {
     console.log("Deleting blog with ID:", mongoId); // Debugging log
-  
+
     if (!mongoId) {
       toast.error("Blog ID is missing");
       return;
     }
-  
+
     try {
-      const response = await axios.delete(`/api/blog`, {
+      const response = await axios.delete(API_URL, {
         params: { id: mongoId },
       });
-  
+
       if (response.data.success) {
         toast.success(response.data.msg);
         fetchBlogs(); // Refresh blog list
