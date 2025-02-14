@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import BlogTableItem from "@/Components/adminComponents/BlogTableItem";
 import { toast } from "react-toastify";
@@ -13,17 +13,17 @@ interface Blog {
 
 const Page: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [error, setError] = useState<string | null>(null); // Error state
+  const [error, setError] = useState<string | null>(null);
 
   // Get API base URL from .env
   const API_URL = process.env.NEXT_PUBLIC_BASE_URL
     ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/blog`
-    : "/api/blog"; // Fallback in case env variable is missing
+    : "/api/blog";
 
   console.log("API URL:", API_URL); // Debugging log
 
-  // Fetch blogs from the API
-  const fetchBlogs = async () => {
+  // Memoized fetchBlogs function
+  const fetchBlogs = useCallback(async () => {
     try {
       const response = await axios.get<{ blogs: Blog[] }>(API_URL);
       setBlogs(response.data.blogs);
@@ -31,11 +31,11 @@ const Page: React.FC = () => {
       console.error("Error fetching blogs:", error);
       setError("An error occurred while fetching the blogs. Please try again later.");
     }
-  };
+  }, [API_URL]); // Include API_URL as a dependency
 
   // Delete a blog by ID
   const deleteBlog = async (mongoId: string) => {
-    console.log("Deleting blog with ID:", mongoId); // Debugging log
+    console.log("Deleting blog with ID:", mongoId);
 
     if (!mongoId) {
       toast.error("Blog ID is missing");
@@ -61,12 +61,12 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [fetchBlogs]); // Now fetchBlogs is included as a dependency
 
   return (
     <div className="p-5 sm:p-12">
       <h1 className="text-2xl font-bold text-gray-800 mb-5">All Blogs</h1>
-      {error && <p className="text-red-500">{error}</p>} {/* Show error if exists */}
+      {error && <p className="text-red-500">{error}</p>}
       <div className="overflow-x-auto shadow-md rounded-lg border">
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-100">
