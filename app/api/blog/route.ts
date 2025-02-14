@@ -3,7 +3,6 @@ import type { NextRequest } from "next/server";
 import { writeFile } from "fs/promises";
 import mongoose from "mongoose";
 import BlogModel from "@/lib/models/BlogModel";
-import EmailModel from "@/lib/models/EmailModel"; // Ensure you have an Email model
 
 // MongoDB connection
 const MONGODB_URI = process.env.MONGO_URI;
