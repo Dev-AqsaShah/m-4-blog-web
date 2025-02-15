@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
       await writeFile(imagePath, buffer);
 
-      imageUrl = `/uploads/${imageName}`; // Adjust for Cloudinary or S3 if needed
+      imageUrl = `/public/assets/${imageName}`; // Adjust for Cloudinary or S3 if needed
     }
 
     // Validate other form fields
