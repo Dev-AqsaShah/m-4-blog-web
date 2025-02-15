@@ -121,7 +121,7 @@ const BlogList = () => {
             image={item.image} // Ensure field names match API response
             title={item.title}
             description={item.description}
-            category={item.category}
+            // category={item.category}
             author={item.author}
           />
         ))}
