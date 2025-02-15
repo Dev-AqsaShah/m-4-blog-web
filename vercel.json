@@ -1,18 +1,11 @@
 {
     "version": 2,
     "functions": {
-      "api/email": {
-        "runtime": "nodejs18.x",
-        "maxDuration": 60
-      },
-      "api/blog": {
-        "runtime": "nodejs18.x",
-        "maxDuration": 60
-      }
+      "api/email/route.ts": { "runtime": "nodejs18.x", "maxDuration": 60 },
+      "api/blogs/route.ts": { "runtime": "nodejs18.x", "maxDuration": 60 }
     },
     "routes": [
-      { "src": "/api/email/(.*)", "dest": "/api/email/$1" },
-      { "src": "/api/blog/(.*)", "dest": "/api/blog/$1" }
+      { "src": "/api/(.*)", "dest": "/api/$1" }
     ]
   }
   
