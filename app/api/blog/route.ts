@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { writeFile } from "fs/promises";
 import mongoose from "mongoose";
 import BlogModel from "@/lib/models/BlogModel";
+import path from "path";
 
 // 🔹 MongoDB Connection
 const MONGODB_URI = process.env.MONGO_URI;
@@ -57,17 +58,21 @@ export async function POST(request: NextRequest) {
 
     // Validate if an image exists
     const image = formData.get("image") as File | null;
-    if (!image) {
-      return NextResponse.json({ success: false, error: "No image provided" }, { status: 400 });
+    let imageUrl = null;
+
+    if (image) {
+      const imageByteData = await image.arrayBuffer();
+      const buffer = Buffer.from(imageByteData);
+
+      // Ensure temp directory exists
+      const tempDir = "/tmp";
+      const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
+      const imagePath = path.join(tempDir, imageName);
+
+      await writeFile(imagePath, buffer);
+
+      imageUrl = `/uploads/${imageName}`; // Adjust for Cloudinary or S3 if needed
     }
-
-    // Save the image to the public folder
-    const imageByteData = await image.arrayBuffer();
-    const buffer = Buffer.from(imageByteData);
-    const imageName = `${timestamp}_${image.name}`;
-    const imagePath = `./public/${imageName}`;
-
-    await writeFile(imagePath, buffer);
 
     // Validate other form fields
     const title = formData.get("title")?.toString();
@@ -86,13 +91,14 @@ export async function POST(request: NextRequest) {
       description,
       category,
       author,
-      image: imageName,
+      image: imageUrl, // Store image path
       authorImage,
     };
+
     await BlogModel.create(blogData);
     console.log("✅ Blog Saved");
 
-    return NextResponse.json({ success: true, msg: "Blog Added" });
+    return NextResponse.json({ success: true, msg: "Blog Added", imageUrl });
   } catch (error) {
     console.error("❌ Error processing blog post:", error);
     return NextResponse.json({ success: false, error: "Failed to process blog post" }, { status: 500 });
