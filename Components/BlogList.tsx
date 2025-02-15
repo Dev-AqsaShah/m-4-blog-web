@@ -69,14 +69,23 @@ import React, { useEffect, useState } from "react";
 import BlogItem from "./BlogItem"; // Ensure this path is correct
 import axios from "axios";
 
+// Define the Blog type
+interface Blog {
+  _id: string; // Add this line
+  image: string;
+  title: string;
+  description: string;
+  category: string;
+  author: string;
+}
 const BlogList = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]); // Explicitly define type
+  const [filteredData, setFilteredData] = useState<Blog[]>([]);
 
   // Fetch Blogs from API
   const fetchBlogs = async () => {
     try {
-      const response = await axios.get("/api/blog");
+      const response = await axios.get<{ blogs: Blog[] }>("/api/blog");
       setBlogs(response.data.blogs);
       setFilteredData(response.data.blogs); // Set initial filtered data
     } catch (error) {
@@ -114,14 +123,13 @@ const BlogList = () => {
 
       {/* Blog Items Section */}
       <div className="flex flex-wrap justify-around gap-2 gap-y-10 mb-16 xl:mx-24 ">
-        {filteredData.map((item, index) => (
+        {filteredData.map((item) => (
           <BlogItem
-            key={index}
-            id={item._id} // MongoDB ID
-            image={item.image} // Ensure field names match API response
+            key={item._id} id={Number(item._id)}
+            image={item.image}
             title={item.title}
             description={item.description}
-            // category={item.category}
+            category={item.category}
             author={item.author}
           />
         ))}
@@ -131,3 +139,4 @@ const BlogList = () => {
 };
 
 export default BlogList;
+
