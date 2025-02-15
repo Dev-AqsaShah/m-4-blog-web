@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { mkdir, writeFile } from "fs/promises";
+import { writeFile } from "fs/promises";
 import mongoose from "mongoose";
 import BlogModel from "@/lib/models/BlogModel";
 
@@ -55,23 +55,21 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const timestamp = Date.now();
 
-    // Validate image exists
+    // Validate if an image exists
     const image = formData.get("image") as File | null;
     if (!image) {
       return NextResponse.json({ success: false, error: "No image provided" }, { status: 400 });
     }
 
-    // Save the image (Use /tmp/ or /public/uploads/)
+    // Save the image to the public folder
     const imageByteData = await image.arrayBuffer();
     const buffer = Buffer.from(imageByteData);
     const imageName = `${timestamp}_${image.name}`;
-    const uploadPath = "./public/assets/";
-    
-    await mkdir(uploadPath, { recursive: true }); // Ensure folder exists
-    const imagePath = `${uploadPath}${imageName}`;
+    const imagePath = `./public/${imageName}`;
+
     await writeFile(imagePath, buffer);
 
-    // Validate form fields
+    // Validate other form fields
     const title = formData.get("title")?.toString();
     const description = formData.get("description")?.toString();
     const category = formData.get("category")?.toString();
@@ -88,7 +86,7 @@ export async function POST(request: NextRequest) {
       description,
       category,
       author,
-      image: `/uploads/${imageName}`, // Store full image URL
+      image: imageName,
       authorImage,
     };
     await BlogModel.create(blogData);
