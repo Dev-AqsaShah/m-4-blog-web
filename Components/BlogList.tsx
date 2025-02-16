@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import BlogItem from "./BlogItem"; // Ensure this path is correct
 import axios from "axios";
 
-// Define the Blog type with _id instead of id
+// Define the Blog type using _id as string
 interface Blog {
   _id: string;
   image: string;
@@ -17,7 +17,7 @@ const BlogList = () => {
   const [filteredData, setFilteredData] = useState<Blog[]>([]);
 
   // Get base URL from env variable
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || process.env.REACT_APP_BASE_URL;
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   // Fetch Blogs from API
   const fetchBlogs = async () => {
@@ -63,7 +63,7 @@ const BlogList = () => {
         {filteredData.map((item) => (
           <BlogItem
             key={item._id}
-            id={item._id}
+            id={item._id}  // Now id is of type string
             image={`${BASE_URL}${item.image.startsWith("/") ? "" : "/"}${item.image}`} // Ensure proper path handling
             title={item.title}
             description={item.description}
