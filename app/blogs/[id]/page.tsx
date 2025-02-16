@@ -79,7 +79,9 @@ export default function BlogDetailPage() {
       {/* Blog Image */}
       <div className="w-full h-64 md:h-80 rounded-lg overflow-hidden">
         <img
-          src={`${BASE_URL}${blog.image.startsWith("/") ? blog.image : `/assets/${blog.image}`}`}
+          src={`${BASE_URL}${
+            blog.image.startsWith("/") ? blog.image : `/assets/${blog.image}`
+          }`}
           alt={blog.title}
           className="w-full h-full object-cover"
         />
@@ -98,7 +100,17 @@ export default function BlogDetailPage() {
 
       {/* Author Section */}
       <div className="flex items-center gap-4 mt-6 p-4 bg-gray-100 rounded-lg">
-        
+        {blog.authorImage && (
+          <img
+            src={`${BASE_URL}${
+              blog.authorImage.startsWith("/")
+                ? blog.authorImage
+                : `/assets/${blog.authorImage}`
+            }`}
+            alt={blog.author}
+            className="w-14 h-14 rounded-full object-cover"
+          />
+        )}
         <div>
           <p className="text-lg font-semibold">{blog.author}</p>
           <p className="text-sm text-gray-500">Blog Author</p>
