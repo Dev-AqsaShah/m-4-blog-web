@@ -22,7 +22,7 @@ export default function BlogDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Get base URL from environment variables
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   useEffect(() => {
     if (!id || id === "NaN" || id.length !== 24) {

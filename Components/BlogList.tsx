@@ -1,8 +1,9 @@
+// Components/BlogList.tsx
 import React, { useEffect, useState } from "react";
-import BlogItem from "./BlogItem"; // Ensure this path is correct
+import BlogItem from "./BlogItem"; // Ensure this is the updated BlogItem component
 import axios from "axios";
 
-// Define the Blog type using _id as string
+// Define the Blog type with _id as a string
 interface Blog {
   _id: string;
   image: string;
@@ -63,8 +64,8 @@ const BlogList = () => {
         {filteredData.map((item) => (
           <BlogItem
             key={item._id}
-            id={item._id}  // Now id is of type string
-            image={`${BASE_URL}${item.image.startsWith("/") ? "" : "/"}${item.image}`} // Ensure proper path handling
+            id={item._id} // This is a string from MongoDB
+            image={`${BASE_URL}${item.image.startsWith("/") ? "" : "/"}${item.image}`}
             title={item.title}
             description={item.description}
             category={item.category}
