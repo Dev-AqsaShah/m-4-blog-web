@@ -1,21 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  experimental: {
-    appDir: true // Ensures Next.js recognizes API routes correctly
-  },
-  async headers() {
-    return [
+  images: {
+    remotePatterns: [
       {
-        source: "/api/:path*", 
-        headers: [
-          { key: "Access-Control-Allow-Origin", value: "*" },
-          { key: "Access-Control-Allow-Methods", value: "GET, POST, OPTIONS" },
-          { key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization" }
-        ]
-      }
-    ];
-  }
+        protocol: "http",
+        hostname: "localhost",
+        port: "3000",
+        pathname: "/**", // Adjust based on your image path
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;

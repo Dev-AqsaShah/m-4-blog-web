@@ -12,11 +12,11 @@ if (!MONGODB_URI) {
 }
 
 const connectDB = async () => {
-  if (mongoose.connection.readyState === 1) return; // If already connected, skip
+  if (mongoose.connection.readyState === 1) return;
 
   try {
     await mongoose.connect(MONGODB_URI, {
-      dbName: "blogDatabase", // Your MongoDB database name
+      dbName: "blogDatabase",
     });
     console.log("✅ Database Connected");
   } catch (error) {
@@ -30,18 +30,23 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB();
     const { searchParams } = new URL(request.url);
-    const blogId = searchParams.get("id");
+    let blogId = searchParams.get("id");
 
-    if (blogId) {
-      const blog = await BlogModel.findById(blogId);
-      if (!blog) {
-        return NextResponse.json({ success: false, error: "Blog not found" }, { status: 404 });
-      }
-      return NextResponse.json({ success: true, blog });
-    } else {
+    console.log("🔍 Received blogId:", blogId); // Debugging Log
+
+    // Prevent "NaN" from breaking the query
+    if (!blogId || blogId === "NaN" || !mongoose.Types.ObjectId.isValid(blogId)) {
+      console.warn("⚠️ Invalid or missing blog ID, fetching all blogs...");
       const blogs = await BlogModel.find({});
       return NextResponse.json({ success: true, blogs });
     }
+
+    const blog = await BlogModel.findById(blogId);
+    if (!blog) {
+      return NextResponse.json({ success: false, error: "Blog not found" }, { status: 404 });
+    }
+    return NextResponse.json({ success: true, blog });
+
   } catch (error) {
     console.error("❌ Error fetching blogs:", error);
     return NextResponse.json({ success: false, error: "Internal Server Error" }, { status: 500 });
@@ -52,29 +57,30 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
-
     const formData = await request.formData();
     const timestamp = Date.now();
 
-    // Validate if an image exists
     const image = formData.get("image") as File | null;
     let imageUrl = null;
 
     if (image) {
       const imageByteData = await image.arrayBuffer();
       const buffer = Buffer.from(imageByteData);
-
-      // Ensure temp directory exists
-      const tempDir = "/tmp";
+      
+      // Define the destination folder: public/assets
+      const assetsDir = path.join(process.cwd(), "public", "assets");
       const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
-      const imagePath = path.join(tempDir, imageName);
-
+      const imagePath = path.join(assetsDir, imageName);
+      
+      // Write the file to public/assets
       await writeFile(imagePath, buffer);
 
-      imageUrl = `/public/assets/${imageName}`; // Adjust for Cloudinary or S3 if needed
+      // Set the URL relative to the public folder (to be used on the client)
+      imageUrl = `/assets/${imageName}`;
+    } else {
+      return NextResponse.json({ success: false, error: "Image file is required" }, { status: 400 });
     }
 
-    // Validate other form fields
     const title = formData.get("title")?.toString();
     const description = formData.get("description")?.toString();
     const category = formData.get("category")?.toString();
@@ -85,13 +91,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
     }
 
-    // Create the blog entry
     const blogData = {
       title,
       description,
       category,
       author,
-      image: imageUrl, // Store image path
+      image: imageUrl,
       authorImage,
     };
 

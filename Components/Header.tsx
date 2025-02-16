@@ -31,10 +31,10 @@ const Header: React.FC = () => {
   };
 
   const slideData: SlideData[] = [
-    { id: 0, img: "/Assets/home1.jpg" },
-    { id: 1, img: "/Assets/artsblog1.webp" },
-    { id: 2, img: "/Assets/home3.jpeg" },
-    { id: 3, img: "/Assets/home4.webp" },
+    { id: 0, img: "/assets/home1.jpg" },
+    { id: 1, img: "/assets/artsblog1.webp" },
+    { id: 2, img: "/assets/home3.jpeg" },
+    { id: 3, img: "/assets/home4.webp" },
   ];
 
   const onSubmitHandler = async (e: React.FormEvent) => {
@@ -85,7 +85,7 @@ const Header: React.FC = () => {
         {/* Header Section */}
         <div className="flex justify-between items-center pt-4 sm:pt-6 lg:pt-8">
           <Image
-            src="/Assets/logo.png"
+            src="/assets/logo.png"
             alt="Aqsa Life Dairy"
             width={130}
             height={80}

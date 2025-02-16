@@ -10,7 +10,7 @@ const Sidebar: React.FC = () => {
     <div className="flex flex-col bg-blue-900 h-screen">
       {/* Logo Section */}
       <div className="px-4 sm:px-14 py-4 border-b border-black">
-        <Image src="/assets/logo.png" width={120} height={120} alt="Logo" />
+        <Image src="./assets/logo.png" width={120} height={120} alt="Logo" />
       </div>
 
       {/* Sidebar Items */}
