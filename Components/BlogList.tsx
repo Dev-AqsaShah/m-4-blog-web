@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import BlogItem from "./BlogItem"; // Ensure this path is correct
 import axios from "axios";
 
-// Define the Blog type
+// Define the Blog type with _id instead of id
 interface Blog {
   _id: string;
   image: string;
