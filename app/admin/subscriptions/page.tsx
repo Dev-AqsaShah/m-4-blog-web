@@ -31,14 +31,12 @@ const Page: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [API_URL]); // ✅ Include API_URL as a dependency
+  }, [API_URL]);
 
-  // Fetch emails on mount
   useEffect(() => {
     fetchEmails();
-  }, [fetchEmails]); // ✅ No more ESLint warning
+  }, [fetchEmails]);
 
-  // Delete email by ID
   const deleteEmail = async (mongoId: string) => {
     try {
       const response = await axios.delete(API_URL, {
@@ -47,7 +45,7 @@ const Page: React.FC = () => {
 
       if (response.data.success) {
         toast.success(response.data.msg);
-        fetchEmails(); // ✅ No issue calling it here
+        fetchEmails();
       } else {
         toast.error("Error deleting email.");
       }

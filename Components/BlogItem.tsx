@@ -1,5 +1,5 @@
 interface BlogItemProps {
-  id: string; // Change from number to string
+  id: string;
   image: string;
   title: string;
   description: string;
@@ -9,11 +9,24 @@ interface BlogItemProps {
 
 const BlogItem: React.FC<BlogItemProps> = ({ id, image, title, description, category, author }) => {
   return (
-    <div>
-      <a href={`/blogs/${id}`}>
-        <h2>{title}</h2>
+    <div className="border rounded-lg p-5 shadow-lg bg-white transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl">
+      <a href={`/blogs/${id}`} className="block overflow-hidden rounded-md">
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-52 object-cover rounded-md transition-transform duration-300 ease-in-out hover:scale-110"
+        />
       </a>
-      <p>{description}</p>
+
+      <div className="mt-4">
+        <a href={`/blogs/${id}`} className="text-2xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+          {title}
+        </a>
+        <p className="text-sm text-gray-500 mt-1">
+          By <span className="font-medium">{author}</span> | {category}
+        </p>
+        <p className="mt-3 text-gray-700 leading-relaxed">{description}</p>
+      </div>
     </div>
   );
 };

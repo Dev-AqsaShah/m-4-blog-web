@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation"; // Removed useRouter
+import { useParams } from "next/navigation";
 
 type Blog = {
   _id: string;
@@ -15,7 +15,7 @@ type Blog = {
 
 export default function BlogDetailPage() {
   const params = useParams();
-  const id = params?.id ? String(params.id) : null; // Ensure it's a string
+  const id = params?.id ? String(params.id) : null;
 
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,21 +48,39 @@ export default function BlogDetailPage() {
   }, [id]);
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center min-h-screen text-lg font-semibold">Loading...</div>;
   }
 
   if (error) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-red-500 text-lg">{error}</p>
+        <p className="text-red-500 text-lg font-medium">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-      <h1 className="text-3xl font-bold">{blog?.title}</h1>
-      <p>{blog?.description}</p>
+    <div className="flex justify-center items-center min-h-screen px-4">
+      {/* Blog Detail Container with Smooth Zoom Effect */}
+      <div className="max-w-4xl w-full p-8 bg-white shadow-2xl rounded-xl transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-3xl">
+        
+        {blog?.image && (
+          <div className="overflow-hidden rounded-lg">
+            <img
+              src={blog.image}
+              alt={blog.title}
+              className="w-full h-[450px] object-cover transition-transform duration-300 ease-in-out hover:scale-110"
+            />
+          </div>
+        )}
+
+        <h1 className="text-4xl font-bold text-gray-900 mt-6">{blog?.title}</h1>
+        <p className="text-gray-600 text-sm mt-2">
+          By <span className="font-semibold">{blog?.author}</span> | <span className="italic">{blog?.category}</span>
+        </p>
+
+        <p className="mt-5 text-lg text-gray-700 leading-relaxed">{blog?.description}</p>
+      </div>
     </div>
   );
 }

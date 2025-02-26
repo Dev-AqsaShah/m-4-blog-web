@@ -1,9 +1,7 @@
-// Components/BlogList.tsx
 import React, { useEffect, useState } from "react";
 import BlogItem from "./BlogItem"; // Ensure this is the updated BlogItem component
 import axios from "axios";
 
-// Define the Blog type with _id as a string
 interface Blog {
   _id: string;
   image: string;
@@ -17,10 +15,8 @@ const BlogList = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [filteredData, setFilteredData] = useState<Blog[]>([]);
 
-  // Get base URL from env variable
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
-  // Fetch Blogs from API
   const fetchBlogs = async () => {
     try {
       const response = await axios.get<{ blogs: Blog[] }>("/api/blog");
@@ -46,7 +42,6 @@ const BlogList = () => {
 
   return (
     <div className="bg-gradient-to-b from-blue-900 to-black min-h-screen pt-1 pb-1">
-      {/* Button Section */}
       <div className="flex justify-center flex-wrap gap-10 my-8 text-white">
         {["All", "Technology", "Traveling", "Animals", "Plants", "Arts", "Lifestyle"].map((category) => (
           <button
@@ -59,12 +54,11 @@ const BlogList = () => {
         ))}
       </div>
 
-      {/* Blog Items Section */}
       <div className="flex flex-wrap justify-around gap-2 gap-y-10 mb-16 xl:mx-24">
         {filteredData.map((item) => (
           <BlogItem
             key={item._id}
-            id={String(item._id)} // Ensure id is always a string
+            id={String(item._id)}
             image={`${BASE_URL}${item.image.startsWith("/") ? "" : "/"}${item.image}`}
             title={item.title}
             description={item.description}
