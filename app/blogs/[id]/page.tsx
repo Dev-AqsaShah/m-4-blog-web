@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation"; // Removed useRouter
 
 type Blog = {
   _id: string;
@@ -15,15 +15,14 @@ type Blog = {
 
 export default function BlogDetailPage() {
   const params = useParams();
-  const router = useRouter();
-  const id = params?.id && typeof params.id === "string" ? params.id : null; // Ensure id is a string
+  const id = params?.id ? String(params.id) : null; // Ensure it's a string
 
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!id || ["undefined", "null", "NaN"].includes(id)) {
+    if (!id || id === "undefined" || id === "null" || id === "NaN") {
       setError("Invalid blog ID");
       setLoading(false);
       return;

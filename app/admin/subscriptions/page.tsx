@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import SubsTableItem from "@/Components/adminComponents/SubsTableItem";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -14,15 +14,14 @@ const Page: React.FC = () => {
   const [emails, setEmails] = useState<EmailData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Ensure API URL is correctly assigned
   const API_URL = process.env.NEXT_PUBLIC_BASE_URL
     ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/email`
-    : "/api/email"; // Fallback in case of missing env variable
+    : "/api/email";
 
   console.log("API URL:", API_URL); // Debugging
 
-  // Fetch emails from API
-  const fetchEmails = async () => {
+  // Wrap fetchEmails in useCallback
+  const fetchEmails = useCallback(async () => {
     try {
       const response = await axios.get(API_URL);
       setEmails(response.data.emails);
@@ -32,7 +31,12 @@ const Page: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_URL]); // ✅ Include API_URL as a dependency
+
+  // Fetch emails on mount
+  useEffect(() => {
+    fetchEmails();
+  }, [fetchEmails]); // ✅ No more ESLint warning
 
   // Delete email by ID
   const deleteEmail = async (mongoId: string) => {
@@ -43,7 +47,7 @@ const Page: React.FC = () => {
 
       if (response.data.success) {
         toast.success(response.data.msg);
-        fetchEmails();
+        fetchEmails(); // ✅ No issue calling it here
       } else {
         toast.error("Error deleting email.");
       }
@@ -52,11 +56,6 @@ const Page: React.FC = () => {
       toast.error("Error deleting email.");
     }
   };
-
-  // Fetch emails on mount
-  useEffect(() => {
-    fetchEmails();
-  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
