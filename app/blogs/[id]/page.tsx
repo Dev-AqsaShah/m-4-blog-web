@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 
 type Blog = {
-  _id: string;
+  _id: string; // Correct MongoDB ID type
   title: string;
   description: string;
   category: string;
   author: string;
   image: string;
-  authorImage: string;
+  authorImage?: string; // Optional, avoids undefined errors
 };
 
 export default function BlogDetailPage() {
@@ -21,11 +21,12 @@ export default function BlogDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Get base URL from environment variables
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
   useEffect(() => {
-    if (!id || id === "NaN" || id.length !== 24) {
+    console.log("Extracted ID from URL:", id); // Debugging log
+
+    if (!id || id.trim() === "" || id.length !== 24) {
       setError("Invalid blog ID");
       setLoading(false);
       return;
@@ -33,7 +34,7 @@ export default function BlogDetailPage() {
 
     const fetchBlog = async () => {
       try {
-        const response = await fetch(`/api/blog?id=${id}`);
+        const response = await fetch(`/api/blog?id=${encodeURIComponent(id)}`);
         if (!response.ok) throw new Error("Failed to fetch blog");
 
         const data = await response.json();
@@ -79,9 +80,7 @@ export default function BlogDetailPage() {
       {/* Blog Image */}
       <div className="w-full h-64 md:h-80 rounded-lg overflow-hidden">
         <img
-          src={`${BASE_URL}${
-            blog.image.startsWith("/") ? blog.image : `/assets/${blog.image}`
-          }`}
+          src={`${BASE_URL}${blog.image.startsWith("/") ? blog.image : `/${blog.image}`}`}
           alt={blog.title}
           className="w-full h-full object-cover"
         />
@@ -94,28 +93,22 @@ export default function BlogDetailPage() {
         <span className="font-semibold">{blog.author}</span>
       </p>
 
-      <p className="text-gray-700 text-lg mt-4 leading-relaxed">
-        {blog.description}
-      </p>
+      <p className="text-gray-700 text-lg mt-4 leading-relaxed">{blog.description}</p>
 
       {/* Author Section */}
-      <div className="flex items-center gap-4 mt-6 p-4 bg-gray-100 rounded-lg">
-        {blog.authorImage && (
+      {blog.authorImage && (
+        <div className="flex items-center gap-4 mt-6 p-4 bg-gray-100 rounded-lg">
           <img
-            src={`${BASE_URL}${
-              blog.authorImage.startsWith("/")
-                ? blog.authorImage
-                : `/assets/${blog.authorImage}`
-            }`}
+            src={`${BASE_URL}${blog.authorImage.startsWith("/") ? blog.authorImage : `/${blog.authorImage}`}`}
             alt={blog.author}
             className="w-14 h-14 rounded-full object-cover"
           />
-        )}
-        <div>
-          <p className="text-lg font-semibold">{blog.author}</p>
-          <p className="text-sm text-gray-500">Blog Author</p>
+          <div>
+            <p className="text-lg font-semibold">{blog.author}</p>
+            <p className="text-sm text-gray-500">Blog Author</p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
