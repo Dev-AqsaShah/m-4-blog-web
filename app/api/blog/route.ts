@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { writeFile } from "fs/promises";
-import { mkdirSync, existsSync } from "fs";
+import { writeFile, mkdir } from "fs/promises";
+import { existsSync } from "fs";
 import mongoose from "mongoose";
 import BlogModel from "@/lib/models/BlogModel";
 import path from "path";
@@ -72,21 +72,20 @@ export async function POST(request: NextRequest) {
       const imageByteData = await image.arrayBuffer();
       const buffer = Buffer.from(imageByteData);
 
-      const assetsDir = path.join(process.cwd(), "public", "assets");
-
-      // ✅ Ensure 'assets' directory exists before writing file
+      // ✅ Save file to /tmp directory (Vercel allows this)
+      const assetsDir = "/tmp/assets";
       if (!existsSync(assetsDir)) {
-        mkdirSync(assetsDir, { recursive: true });
+        await mkdir(assetsDir, { recursive: true });
       }
 
       const timestamp = Date.now();
       const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
       const imagePath = path.join(assetsDir, imageName);
 
-      // ✅ Remove callback, since writeFile in fs/promises is async
       await writeFile(imagePath, buffer);
 
-      imageUrl = `/assets/${imageName}`;
+      // ✅ Serve image via an API route
+      imageUrl = `/api/images/${imageName}`;
     } else {
       return NextResponse.json(
         { success: false, error: "Image file is required" },
@@ -108,17 +107,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, msg: "Blog Added", imageUrl });
   } catch (error) {
     console.error("Error:", error);
-
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to process blog post";
-
     return NextResponse.json(
-      { success: false, error: errorMessage },
+      { success: false, error: error instanceof Error ? error.message : "Failed to process blog post" },
       { status: 500 }
     );
   }
 }
-
 
 // 🔴 DELETE: Remove a Blog by ID
 export async function DELETE(request: NextRequest) {
