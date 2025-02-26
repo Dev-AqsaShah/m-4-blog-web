@@ -16,15 +16,15 @@ const connectDB = async () => {
   if (mongoose.connection.readyState === 1) return;
 
   try {
-    await mongoose.connect(MONGODB_URI, {
-      dbName: "blogDatabase",
-    });
-    console.log("✅ Database Connected");
+    console.log("⏳ Connecting to MongoDB...");
+    await mongoose.connect(MONGODB_URI, { dbName: "blogDatabase" });
+    console.log("✅ MongoDB Connected!");
   } catch (error) {
-    console.error("❌ Database Connection Error:", error);
-    throw new Error("Failed to connect to the database");
+    console.error("❌ MongoDB Connection Error:", error);
+    throw new Error("Failed to connect to MongoDB");
   }
 };
+
 
 // 🟢 GET: Fetch All Blogs or a Single Blog by ID
 export async function GET(request: NextRequest) {
@@ -83,7 +83,9 @@ export async function POST(request: NextRequest) {
       const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
       const imagePath = path.join(assetsDir, imageName);
 
+      // ✅ Remove callback, since writeFile in fs/promises is async
       await writeFile(imagePath, buffer);
+
       imageUrl = `/assets/${imageName}`;
     } else {
       return NextResponse.json(
@@ -106,12 +108,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, msg: "Blog Added", imageUrl });
   } catch (error) {
     console.error("Error:", error);
+
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to process blog post";
+
     return NextResponse.json(
-      { success: false, error: "Failed to process blog post" },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }
 }
+
 
 // 🔴 DELETE: Remove a Blog by ID
 export async function DELETE(request: NextRequest) {
