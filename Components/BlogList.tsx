@@ -18,7 +18,7 @@ const BlogList = () => {
   const [filteredData, setFilteredData] = useState<Blog[]>([]);
 
   // Get base URL from env variable
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
   // Fetch Blogs from API
   const fetchBlogs = async () => {
@@ -71,7 +71,6 @@ const BlogList = () => {
             category={item.category}
             author={item.author}
           />
-
         ))}
       </div>
     </div>
