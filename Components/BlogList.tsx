@@ -64,7 +64,7 @@ const BlogList = () => {
         {filteredData.map((item) => (
           <BlogItem
             key={item._id}
-            id={item._id} // Ensure this is a string
+            id={String(item._id)} // Ensure id is always a string
             image={`${BASE_URL}${item.image.startsWith("/") ? "" : "/"}${item.image}`}
             title={item.title}
             description={item.description}

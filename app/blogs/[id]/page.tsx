@@ -1,32 +1,29 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 type Blog = {
-  _id: string; // Correct MongoDB ID type
+  _id: string;
   title: string;
   description: string;
   category: string;
   author: string;
   image: string;
-  authorImage?: string; // Optional, avoids undefined errors
+  authorImage?: string;
 };
 
 export default function BlogDetailPage() {
   const params = useParams();
-  const id = params?.id as string | undefined;
+  const router = useRouter();
+  const id = params?.id && typeof params.id === "string" ? params.id : null; // Ensure id is a string
 
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
-
   useEffect(() => {
-    console.log("Extracted ID from URL:", id); // Debugging log
-
-    if (!id || id.trim() === "" || id.length !== 24) {
+    if (!id || ["undefined", "null", "NaN"].includes(id)) {
       setError("Invalid blog ID");
       setLoading(false);
       return;
@@ -52,11 +49,7 @@ export default function BlogDetailPage() {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p className="text-lg text-gray-600">Loading...</p>
-      </div>
-    );
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
   }
 
   if (error) {
@@ -67,48 +60,10 @@ export default function BlogDetailPage() {
     );
   }
 
-  if (!blog) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p className="text-gray-600 text-lg">Blog not found.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-      {/* Blog Image */}
-      <div className="w-full h-64 md:h-80 rounded-lg overflow-hidden">
-        <img
-          src={`${BASE_URL}${blog.image.startsWith("/") ? blog.image : `/${blog.image}`}`}
-          alt={blog.title}
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* Blog Content */}
-      <h1 className="text-3xl font-bold mt-6">{blog.title}</h1>
-      <p className="text-gray-600 text-sm mt-2">
-        <span className="text-blue-500 font-semibold">{blog.category}</span> | By{" "}
-        <span className="font-semibold">{blog.author}</span>
-      </p>
-
-      <p className="text-gray-700 text-lg mt-4 leading-relaxed">{blog.description}</p>
-
-      {/* Author Section */}
-      {blog.authorImage && (
-        <div className="flex items-center gap-4 mt-6 p-4 bg-gray-100 rounded-lg">
-          <img
-            src={`${BASE_URL}${blog.authorImage.startsWith("/") ? blog.authorImage : `/${blog.authorImage}`}`}
-            alt={blog.author}
-            className="w-14 h-14 rounded-full object-cover"
-          />
-          <div>
-            <p className="text-lg font-semibold">{blog.author}</p>
-            <p className="text-sm text-gray-500">Blog Author</p>
-          </div>
-        </div>
-      )}
+      <h1 className="text-3xl font-bold">{blog?.title}</h1>
+      <p>{blog?.description}</p>
     </div>
   );
 }
