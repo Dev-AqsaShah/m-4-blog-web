@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { writeFile } from "fs/promises";
+import { mkdirSync, existsSync } from "fs";
 import mongoose from "mongoose";
 import BlogModel from "@/lib/models/BlogModel";
 import path from "path";
@@ -63,7 +64,6 @@ export async function POST(request: NextRequest) {
   try {
     await connectDB();
     const formData = await request.formData();
-    const timestamp = Date.now();
 
     const image = formData.get("image") as File | null;
     let imageUrl = null;
@@ -72,15 +72,18 @@ export async function POST(request: NextRequest) {
       const imageByteData = await image.arrayBuffer();
       const buffer = Buffer.from(imageByteData);
 
-      // Define the destination folder: public/assets
       const assetsDir = path.join(process.cwd(), "public", "assets");
+
+      // ✅ Ensure 'assets' directory exists before writing file
+      if (!existsSync(assetsDir)) {
+        mkdirSync(assetsDir, { recursive: true });
+      }
+
+      const timestamp = Date.now();
       const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
       const imagePath = path.join(assetsDir, imageName);
 
-      // Write the file to public/assets
       await writeFile(imagePath, buffer);
-
-      // Set the URL relative to the public folder (to be used on the client)
       imageUrl = `/assets/${imageName}`;
     } else {
       return NextResponse.json(
@@ -89,34 +92,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const title = formData.get("title")?.toString();
-    const description = formData.get("description")?.toString();
-    const category = formData.get("category")?.toString();
-    const author = formData.get("author")?.toString();
-    const authorImage = formData.get("authorImage")?.toString();
-
-    if (!title || !description || !category || !author || !authorImage) {
-      return NextResponse.json(
-        { success: false, error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
-
     const blogData = {
-      title,
-      description,
-      category,
-      author,
+      title: formData.get("title"),
+      description: formData.get("description"),
+      category: formData.get("category"),
+      author: formData.get("author"),
+      authorImage: formData.get("authorImage"),
       image: imageUrl,
-      authorImage,
     };
 
     await BlogModel.create(blogData);
-    console.log("✅ Blog Saved");
 
     return NextResponse.json({ success: true, msg: "Blog Added", imageUrl });
   } catch (error) {
-    console.error("❌ Error processing blog post:", error);
+    console.error("Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to process blog post" },
       { status: 500 }
