@@ -84,7 +84,6 @@ export async function POST(request: NextRequest) {
 
       await writeFile(imagePath, buffer);
 
-      // ✅ Serve image via an API route
       imageUrl = `/api/images/${imageName}`;
     } else {
       return NextResponse.json(
