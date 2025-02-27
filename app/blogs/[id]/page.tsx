@@ -13,6 +13,8 @@ type Blog = {
   authorImage?: string;
 };
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
+
 export default function BlogDetailPage() {
   const params = useParams();
   const id = params?.id ? String(params.id) : null;
@@ -67,7 +69,7 @@ export default function BlogDetailPage() {
         {blog?.image && (
           <div className="overflow-hidden rounded-lg">
             <img
-              src={blog.image}
+              src={`${BASE_URL}${blog.image}`}
               alt={blog.title}
               className="w-full h-[450px] object-cover transition-transform duration-300 ease-in-out hover:scale-110"
             />
