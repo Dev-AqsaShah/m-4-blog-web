@@ -63,7 +63,7 @@ export default function BlogDetailPage() {
 
   return (
     <div className="flex justify-center items-center min-h-screen px-4">
-      {/* Blog Detail Container with Smooth Zoom Effect */}
+      
       <div className="max-w-4xl w-full p-8 bg-white shadow-2xl rounded-xl transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-3xl">
         
         {blog?.image && (
