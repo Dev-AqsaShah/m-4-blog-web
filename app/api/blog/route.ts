@@ -145,61 +145,63 @@ export async function DELETE(request: NextRequest) {
   }
 }
 
-  export async function PUT(request: NextRequest) {
-    try {
-      await connectDB();
-      const formData = await request.formData();
-      const blogId = formData.get("id");
+  ////////////// Work for update blog
+
+  // export async function PUT(request: NextRequest) {
+  //   try {
+  //     await connectDB();
+  //     const formData = await request.formData();
+  //     const blogId = formData.get("id");
   
-      if (!blogId || !mongoose.Types.ObjectId.isValid(blogId as string)) {
-        return NextResponse.json(
-          { success: false, error: "Invalid or missing blog ID" },
-          { status: 400 }
-        );
-      }
+  //     if (!blogId || !mongoose.Types.ObjectId.isValid(blogId as string)) {
+  //       return NextResponse.json(
+  //         { success: false, error: "Invalid or missing blog ID" },
+  //         { status: 400 }
+  //       );
+  //     }
   
-      const existingBlog = await BlogModel.findById(blogId);
-      if (!existingBlog) {
-        return NextResponse.json(
-          { success: false, error: "Blog not found" },
-          { status: 404 }
-        );
-      }
+  //     const existingBlog = await BlogModel.findById(blogId);
+  //     if (!existingBlog) {
+  //       return NextResponse.json(
+  //         { success: false, error: "Blog not found" },
+  //         { status: 404 }
+  //       );
+  //     }
   
-      const image = formData.get("image") as File | null;
-      let imageUrl = existingBlog.image;
+  //     const image = formData.get("image") as File | null;
+  //     let imageUrl = existingBlog.image;
   
-      if (image) {
-        const imageByteData = await image.arrayBuffer();
-        const buffer = Buffer.from(imageByteData);
-        const assetsDir = "/tmp/assets";
-        if (!existsSync(assetsDir)) {
-          await mkdir(assetsDir, { recursive: true });
-        }
-        const timestamp = Date.now();
-        const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
-        const imagePath = path.join(assetsDir, imageName);
-        await writeFile(imagePath, buffer);
-        imageUrl = `/api/images/${imageName}`;
-      }
+  //     if (image) {
+  //       const imageByteData = await image.arrayBuffer();
+  //       const buffer = Buffer.from(imageByteData);
+  //       const assetsDir = "/tmp/assets";
+  //       if (!existsSync(assetsDir)) {
+  //         await mkdir(assetsDir, { recursive: true });
+  //       }
+  //       const timestamp = Date.now();
+  //       const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
+  //       const imagePath = path.join(assetsDir, imageName);
+  //       await writeFile(imagePath, buffer);
+  //       imageUrl = `/api/images/${imageName}`;
+  //     }
   
-      const updatedData = {
-        title: formData.get("title") || existingBlog.title,
-        description: formData.get("description") || existingBlog.description,
-        category: formData.get("category") || existingBlog.category,
-        author: formData.get("author") || existingBlog.author,
-        authorImage: formData.get("authorImage") || existingBlog.authorImage,
-        image: imageUrl,
-      };
+  //     const updatedData = {
+  //       title: formData.get("title") || existingBlog.title,
+  //       description: formData.get("description") || existingBlog.description,
+  //       category: formData.get("category") || existingBlog.category,
+  //       author: formData.get("author") || existingBlog.author,
+  //       authorImage: formData.get("authorImage") || existingBlog.authorImage,
+  //       image: imageUrl,
+  //     };
   
-      await BlogModel.findByIdAndUpdate(blogId, updatedData, { new: true });
+  //     await BlogModel.findByIdAndUpdate(blogId, updatedData, { new: true });
   
-      return NextResponse.json({ success: true, msg: "Blog updated successfully" });
-    } catch (error) {
-      console.error("❌ Error updating blog:", error);
-      return NextResponse.json(
-        { success: false, error: "Failed to update blog" },
-        { status: 500 }
-      );
-    }
-  }
+  //     return NextResponse.json({ success: true, msg: "Blog updated successfully" });
+  //   } catch (error) {
+  //     console.error("❌ Error updating blog:", error);
+  //     return NextResponse.json(
+  //       { success: false, error: "Failed to update blog" },
+  //       { status: 500 }
+  //     );
+  //   }
+  // }
