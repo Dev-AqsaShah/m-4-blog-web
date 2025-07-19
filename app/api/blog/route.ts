@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       const imageByteData = await image.arrayBuffer();
       const buffer = Buffer.from(imageByteData);
 
-      // ✅ Save file to /tmp directory (Vercel allows this)
+      // Save file to /tmp directory (Vercel allows this)
       const assetsDir = "/tmp/assets";
       if (!existsSync(assetsDir)) {
         await mkdir(assetsDir, { recursive: true });
