@@ -1,34 +1,22 @@
-interface BlogItemProps {
-  id: string;
-  image: string;
-  title: string;
-  description: string;
-  category: string;
-  author: string;
+import Image from 'next/image'
+import React from 'react'
+import { blog_data } from './Details'
+
+const BlogItem = () => {
+  return (
+    <div className="max-w-[330] sm:max-w-[300px] bg-gradient-to-b from-blue-900 to-black hover:shadow-[-7px_7px_0px_#0000000] ">
+      <Image src={blog_data[0].Image } alt=""width={400} height={400} className="border-b border-black" />
+      <p className="ml-5 mt-5 px-1 inline-block bg-black text-white text-sm " >{blog_data[0].category}</p>
+      <div className="p-5">
+        <h5 className="mb-2 text-lg font-medium tracking-tight text-white" >{blog_data[0].title} </h5>
+        <p className="mb-3 text-sm tracking-tight text-white" >{blog_data[0].description} </p>
+        <div className="inline-flex items-center py-2 font-semibold text-center text-white">
+          Read more 
+        </div>
+      </div>
+
+    </div>
+  )
 }
 
-const BlogItem: React.FC<BlogItemProps> = ({ id, image, title, description, category, author }) => {
-  return (
-    <div className="border rounded-lg p-5 shadow-lg bg-white transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-2xl">
-      <a href={`/blogs/${id}`} className="block overflow-hidden rounded-md">
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-52 object-cover rounded-md transition-transform duration-300 ease-in-out hover:scale-110"
-        />
-      </a>
-
-      <div className="mt-4">
-        <a href={`/blogs/${id}`} className="text-2xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
-          {title}
-        </a>
-        <p className="text-sm text-gray-500 mt-1">
-          By <span className="font-medium">{author}</span> | {category}
-        </p>
-        <p className="mt-3 text-gray-700 leading-relaxed">{description}</p>
-      </div>
-    </div>
-  );
-};
-
-export default BlogItem;
+export default BlogItem
