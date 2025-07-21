@@ -1,9 +1,9 @@
 import React from "react";
 
 interface SubsTableItemProps {
-  email?: string; // Optional email property
-  mongoId: string; // Unique identifier for the email
-  deleteEmail: (mongoId: string) => Promise<void>; // Function to handle delete action
+  email?: string;
+  mongoId: string;
+  deleteEmail: (mongoId: string) => Promise<void>;
 }
 
 const SubsTableItem: React.FC<SubsTableItemProps> = ({ email, mongoId, deleteEmail }) => {
@@ -17,7 +17,7 @@ const SubsTableItem: React.FC<SubsTableItemProps> = ({ email, mongoId, deleteEma
       </th>
       <td
         className="px-6 py-4 cursor-pointer text-red-500 hover:underline"
-        onClick={() => deleteEmail(mongoId)} // Call deleteEmail function with mongoId
+        onClick={() => deleteEmail(mongoId)}
       >
         Delete
       </td>

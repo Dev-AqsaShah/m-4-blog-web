@@ -9,6 +9,7 @@ interface Blog {
   _id: string; // Blog ID
   author: string; // Author name
   title: string; // Blog title
+  description : string;
 }
 
 const Page: React.FC = () => {
@@ -73,6 +74,7 @@ const Page: React.FC = () => {
             <tr>
               <th scope="col" className="px-6 py-3">Author</th>
               <th scope="col" className="px-6 py-3">Title</th>
+              <th scope="col" className="px-6 py-3">Description</th>
               <th scope="col" className="px-6 py-3">Action</th>
             </tr>
           </thead>
@@ -83,6 +85,7 @@ const Page: React.FC = () => {
                 id={blog._id}
                 author={blog.author}
                 title={blog.title}
+                description={blog.description}
                 onDelete={deleteBlog}
               />
             ))}

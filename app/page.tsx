@@ -12,7 +12,7 @@ export default function Home() {
     <>
     <ToastContainer theme="dark"/>
     <Header />
-    <BlogItem id={""} image={""} title={""} description={""} category={""} author={""}/>
+    {/* <BlogItem id={""} image={""} title={""} description={""} category={""} author={""}/> */}
     <BlogList />
     <Footer />
     </>
