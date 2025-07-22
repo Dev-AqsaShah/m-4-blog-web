@@ -4,9 +4,9 @@ import { promises as fs } from "fs";
 
 export async function GET(
   req: NextRequest,
-  context: any // 👈 Easiest fix — no typing issue
+  { params }: { params: { filename: string } }
 ) {
-  const { filename } = context.params;
+  const { filename } = params;
 
   const baseDir =
     process.env.NODE_ENV === "development"
