@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
 import path from "path";
-import type { RouteHandlerContext } from "next/dist/server/future/route-modules/app-route";
+import { promises as fs } from "fs";
 
 export async function GET(
   req: NextRequest,
-  context: RouteHandlerContext
+  { params }: { params: { filename: string } }
 ) {
-  const { filename } = context.params;
+  const { filename } = params;
 
   const baseDir =
     process.env.NODE_ENV === "development"
