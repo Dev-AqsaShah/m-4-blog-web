@@ -36,6 +36,7 @@ export async function GET(
       },
     });
   } catch (err) {
-    return new NextResponse("Image not found", { status: 404 });
-  }
+  console.error("Error loading image:", err);
+  return new NextResponse("Image not found", { status: 404 });
+}
 }
