@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import type { RouteHandlerContext } from "next/dist/server/future/route-modules/app-route";
