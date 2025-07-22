@@ -1,26 +1,25 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import path from "path";
 import { promises as fs } from "fs";
+import path from "path";
+import type { RouteHandlerContext } from "next/dist/server/future/route-modules/app-route";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { filename: string } }
+  context: RouteHandlerContext
 ) {
-  const { filename } = params;
+  const { filename } = context.params;
 
-  // Base directory depending on environment
   const baseDir =
     process.env.NODE_ENV === "development"
       ? path.join(process.cwd(), "public/uploads")
-      : "/tmp/assets"; // For Vercel or similar
+      : "/tmp/assets";
 
   const filePath = path.join(baseDir, filename);
 
   try {
     const fileBuffer = await fs.readFile(filePath);
 
-    // Determine MIME type
     const ext = path.extname(filename).toLowerCase();
     const mimeType =
       ext === ".png"
