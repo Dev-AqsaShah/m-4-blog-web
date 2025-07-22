@@ -1,16 +1,22 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
 
-// Correctly typed dynamic route function
+// ✅ Correct type of second argument
 export async function GET(
   req: NextRequest,
-  { params }: { params: { filename: string } }
+  context: { params: { filename: string } }
 ) {
-  const { filename } = params;
+  const { filename } = context.params;
 
-  // Use a safe path for Vercel (runtime-writable)
-  const filePath = path.join("/tmp/assets", filename);
+  // ✅ Optional: Use different folder based on environment
+  const baseDir =
+    process.env.NODE_ENV === "development"
+      ? path.join(process.cwd(), "public/uploads")
+      : "/tmp/assets"; // Vercel allows only /tmp
+
+  const filePath = path.join(baseDir, filename);
 
   try {
     const fileBuffer = await fs.readFile(filePath);
@@ -29,7 +35,7 @@ export async function GET(
         "Content-Disposition": `inline; filename="${filename}"`,
       },
     });
-  } catch {
+  } catch (err) {
     return new NextResponse("Image not found", { status: 404 });
   }
 }
