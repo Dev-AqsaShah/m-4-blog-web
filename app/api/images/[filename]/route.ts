@@ -3,30 +3,32 @@ import type { NextRequest } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
 
-// ✅ Correct type of second argument
 export async function GET(
   req: NextRequest,
-  context: { params: { filename: string } }
+  { params }: { params: { filename: string } }
 ) {
-  const { filename } = context.params;
+  const { filename } = params;
 
-  // ✅ Optional: Use different folder based on environment
+  // Base directory depending on environment
   const baseDir =
     process.env.NODE_ENV === "development"
       ? path.join(process.cwd(), "public/uploads")
-      : "/tmp/assets"; // Vercel allows only /tmp
+      : "/tmp/assets"; // For Vercel or similar
 
   const filePath = path.join(baseDir, filename);
 
   try {
     const fileBuffer = await fs.readFile(filePath);
 
+    // Determine MIME type
     const ext = path.extname(filename).toLowerCase();
     const mimeType =
       ext === ".png"
         ? "image/png"
         : ext === ".jpg" || ext === ".jpeg"
         ? "image/jpeg"
+        : ext === ".webp"
+        ? "image/webp"
         : "application/octet-stream";
 
     return new NextResponse(fileBuffer, {
@@ -36,7 +38,7 @@ export async function GET(
       },
     });
   } catch (err) {
-  console.error("Error loading image:", err);
-  return new NextResponse("Image not found", { status: 404 });
-}
+    console.error("Error loading image:", err);
+    return new NextResponse("Image not found", { status: 404 });
+  }
 }
