@@ -1,14 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
 
+// Correctly typed dynamic route function
 export async function GET(
-  request: Request,
-  context: { params: { filename: string } }
+  req: NextRequest,
+  { params }: { params: { filename: string } }
 ) {
-  const { filename } = context.params;
+  const { filename } = params;
 
-  // ✅ Use Vercel's writable tmp directory
+  // Use a safe path for Vercel (runtime-writable)
   const filePath = path.join("/tmp/assets", filename);
 
   try {
