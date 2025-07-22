@@ -1,30 +1,34 @@
-import { NextRequest, NextResponse } from "next/server";
-import { readFile } from "fs/promises";
+import { NextResponse } from "next/server";
 import path from "path";
+import { promises as fs } from "fs";
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { filename: string } }
+  request: Request,
+  context: { params: { filename: string } }
 ) {
+  const { filename } = context.params;
+
+  // ✅ Use Vercel's writable tmp directory
+  const filePath = path.join("/tmp/assets", filename);
+
   try {
-    const filePath = path.join("/tmp/assets", params.filename);
-    const fileBuffer = await readFile(filePath);
+    const fileBuffer = await fs.readFile(filePath);
 
-    const ext = path.extname(params.filename).toLowerCase();
-    let contentType = "application/octet-stream";
-
-    if (ext === ".jpg" || ext === ".jpeg") contentType = "image/jpeg";
-    else if (ext === ".png") contentType = "image/png";
-    else if (ext === ".gif") contentType = "image/gif";
-    else if (ext === ".webp") contentType = "image/webp";
+    const ext = path.extname(filename).toLowerCase();
+    const mimeType =
+      ext === ".png"
+        ? "image/png"
+        : ext === ".jpg" || ext === ".jpeg"
+        ? "image/jpeg"
+        : "application/octet-stream";
 
     return new NextResponse(fileBuffer, {
       headers: {
-        "Content-Type": contentType,
-        "Content-Disposition": `inline; filename="${params.filename}"`,
+        "Content-Type": mimeType,
+        "Content-Disposition": `inline; filename="${filename}"`,
       },
     });
   } catch {
-    return NextResponse.json({ error: "Image not found" }, { status: 404 });
+    return new NextResponse("Image not found", { status: 404 });
   }
 }
