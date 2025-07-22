@@ -10,13 +10,21 @@ export async function GET(
     const filePath = path.join("/tmp/assets", params.filename);
     const fileBuffer = await readFile(filePath);
 
+    const ext = path.extname(params.filename).toLowerCase();
+    let contentType = "application/octet-stream";
+
+    if (ext === ".jpg" || ext === ".jpeg") contentType = "image/jpeg";
+    else if (ext === ".png") contentType = "image/png";
+    else if (ext === ".gif") contentType = "image/gif";
+    else if (ext === ".webp") contentType = "image/webp";
+
     return new NextResponse(fileBuffer, {
       headers: {
-        "Content-Type": "image/jpeg",
+        "Content-Type": contentType,
+        "Content-Disposition": `inline; filename="${params.filename}"`,
       },
     });
   } catch {
-    // ❌ Removed unused `error`
     return NextResponse.json({ error: "Image not found" }, { status: 404 });
   }
 }
