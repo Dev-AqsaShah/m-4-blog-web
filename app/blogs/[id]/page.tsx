@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 
 type Blog = {
   _id: string;
@@ -13,7 +14,8 @@ type Blog = {
   authorImage?: string;
 };
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") || "";
 
 export default function BlogDetailPage() {
   const params = useParams();
@@ -63,15 +65,17 @@ export default function BlogDetailPage() {
 
   return (
     <div className="flex justify-center items-center min-h-screen px-4">
-      
       <div className="max-w-4xl w-full p-8 bg-white shadow-2xl rounded-xl transition-transform duration-500 ease-in-out hover:scale-105 hover:shadow-3xl">
-        
+
         {blog?.image && (
-          <div className="overflow-hidden rounded-lg">
-            <img
+          <div className="overflow-hidden rounded-lg relative w-full h-[450px]">
+            <Image
               src={`${BASE_URL}${blog.image}`}
               alt={blog.title}
-              className="w-full h-[450px] object-cover transition-transform duration-300 ease-in-out hover:scale-110"
+              fill
+              className="object-cover transition-transform duration-300 ease-in-out hover:scale-110"
+              sizes="(max-width: 768px) 100vw, 768px"
+              priority
             />
           </div>
         )}

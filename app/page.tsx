@@ -5,7 +5,7 @@ import BlogList from "@/Components/BlogList"
 import Footer from "@/Components/Footer"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import BlogItem from "@/Components/BlogItem"
+// import BlogItem from "@/Components/BlogItem"
 
 export default function Home() {
   return (
