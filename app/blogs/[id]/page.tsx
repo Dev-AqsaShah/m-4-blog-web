@@ -1,6 +1,5 @@
-"use client";
 
-import { blog_data } from '@/Components/Details';
+// import { blog_data } from '@/Components/Details';
 // import { useState, useEffect } from "react";
 // import { useParams } from "next/navigation";
 // import Image from "next/image";
@@ -93,7 +92,10 @@ import { blog_data } from '@/Components/Details';
 // }
 
 
-import React, { useState } from 'react'
+"use client";
+
+import { blog_data } from '@/Components/Details';
+import React, { useEffect, useState } from 'react'
 
 const page = ({params}) => {
 
@@ -104,13 +106,16 @@ const page = ({params}) => {
         {
           if (Number(params.id)===blog_data[i].id) {
               setData(blog_data[i]);
+              console.log(blog_data[i]);
+              break;
+              
           }
         }
 
   }
   useEffect(() =>{
     fetchBlogData();
-  };[])
+  },[])
 
   return (
     <div>
