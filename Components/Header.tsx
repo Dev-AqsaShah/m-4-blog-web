@@ -92,7 +92,7 @@ const Header: React.FC = () => {
             className="w-[90px] sm:w-[100px] md:w-[110px]"
           />
           <Link href="/admin">
-            <button className="flex items-center gap-2 font-medium py-2 px-4 sm:py-3 sm:px-6 border shadow-[0_0_15px_5px_rgba(255,255,255,1)] border-white bg-blue-900 text-white hover:bg-black hover:text-white transition-all transform hover:scale-105 rounded-full">
+            <button className="flex items-center gap-2 font-medium py-2 px-4 sm:py-3 sm:px-6 hover:scale-105 rounded-full border shadow-[0_0_15px_5px_rgba(255,255,255,1)] border-white bg-blue-900 text-white hover:bg-black hover:text-white transition-all transform ">
               Get Started
               <FaArrowRightLong />
             </button>
@@ -103,17 +103,17 @@ const Header: React.FC = () => {
         <div className="text-center mt-10 sm:mt-16 lg:mt-20">
           <h1 className="text-3xl sm:text-5xl font-bold">LATEST BLOGS</h1>
           <h3 className="text-lg sm:text-2xl font-semibold mt-4">
-            Your stories. My stories. Life's unfolding moments.
+            Your stories. My stories. Lifes unfolding moments.
           </h3>
           <p className="mt-3 max-w-[740px] mx-auto text-sm sm:text-base">
             Welcome to Life Unfolded — a heartfelt space where stories meet
-            reality. This is more than just a blog; it's a platform for everyone
+            reality. This is more than just a blog; its a platform for everyone
             to share their journey. From the wonder of animals and the serenity
             of plants to the creativity of arts, the logic of programming
-            languages, and the thrill of traveling — there's a category for every
-            story. Whether you're here to read, reflect, or contribute, this is
+            languages, and the thrill of traveling — theres a category for every
+            story. Whether youre here to read, reflect, or contribute, this is
             your space. Add your own real-life stories, connect with others, and
-            explore the beauty of life through shared experiences. Let's create a
+            explore the beauty of life through shared experiences. Lets create a
             tapestry of moments together.
           </p>
         </div>
