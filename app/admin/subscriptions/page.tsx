@@ -60,11 +60,11 @@ const Page: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 pt-5 px-5 sm:pt-12 sm:pl-16">
+    <div className="lg:pt-28 flex-1 pt-28 px-5 sm:pt-12 sm:pl-16 bg-gradient-to-b from-blue-800 to-black min-h-screen text-white">
       <h1>All Subscriptions</h1>
-      <div className="relative max-w-[600px] h-[80vh] overflow-x-auto mt-4 border border-gray-500 scrollbar-hide">
-        <table className="w-full text-sm text-gray-500">
-          <thead className="text-xs text-left text-gray-700 uppercase bg-gray-50">
+      <div className="relative max-w-[600px] h-[80vh] overflow-x-auto mt-4 border-2 border-white scrollbar-hide">
+        <table className="w-full text-sm text-white">
+          <thead className="text-xs text-left text-white uppercase ">
             <tr>
               <th scope="col" className="px-6 py-3">Email Subscription</th>
               <th scope="col" className="px-6 py-3">Action</th>

@@ -65,12 +65,12 @@ const Page: React.FC = () => {
   }, [fetchBlogs]); // Now fetchBlogs is included as a dependency
 
   return (
-    <div className="p-5 sm:p-12">
-      <h1 className="text-2xl font-bold text-gray-800 mb-5">All Blogs</h1>
+    <div className=" lg:pt-28 p-5 sm:p-12 pt-24 bg-gradient-to-b from-blue-800 to-black min-h-screen text-white ">
+      <h1 className="text-2xl font-bold text-white mb-5">All Blogs</h1>
       {error && <p className="text-red-500">{error}</p>}
-      <div className="overflow-x-auto shadow-md rounded-lg border">
+      <div className="overflow-x-auto shadow-md rounded-lg border-2">
         <table className="w-full text-sm text-left text-gray-500">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-100">
+          <thead className="text-xs text-white uppercase ">
             <tr>
               <th scope="col" className="px-6 py-3">Author</th>
               <th scope="col" className="px-6 py-3">Title</th>

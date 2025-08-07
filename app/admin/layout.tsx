@@ -1,28 +1,41 @@
 import Sidebar from "@/Components/adminComponents/Sidebar";
 import { ReactNode } from "react";
-import { FaUserCircle } from "react-icons/fa";
-import { ToastContainer} from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import Footer from "@/Components/Footer";
+import Link from "next/link";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  return <>
-  <div className="flex">
-
-    <div className="flex"/>
-    <ToastContainer theme="dark"/>
-    <Sidebar />
-    <div className="flex flex-col w-full">
-      <div className="flex items-center justify-between w-full py-3 max-h-[60px] px-12 border border-white ">
-      <h3 className="font-medium">ADMIN PANEL</h3>
-      <FaUserCircle />
+  return (
+    <>
+      {/* Back to Home Button (top-left corner) */}
+      <div className="absolute left-60 top-7 z-50">
+        <Link href="/">
+          <button className="px-5 py-2 rounded-full text-sm sm:text-base font-medium transition-all duration-300 bg-white hover:bg-black hover:text-white text-black border-2 border-black shadow-[0_0_10px_2px_white] hover:scale-105">
+            Back to Home
+          </button>
+        </Link>
       </div>
-      {children}
 
-    </div>
-  </div>
-  </>;
+      {/* Toast Notifications */}
+      <ToastContainer theme="dark" />
+
+      {/* Main Layout with Sidebar */}
+      <div className="flex min-h-screen">
+        <Sidebar />
+
+        <div className="flex flex-col w-full">
+          {/* Page Content */}
+          {children}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <Footer />
+    </>
+  );
 }

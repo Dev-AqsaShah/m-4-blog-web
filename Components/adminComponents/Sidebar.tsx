@@ -7,7 +7,7 @@ import Link from "next/link";
 
 const Sidebar: React.FC = () => {
   return (
-    <div className="flex flex-col bg-blue-900 h-screen">
+    <div className="flex flex-col bg-gradient-to-b from-blue-800 to-black min-h-screen">
       {/* Logo Section */}
       <div className="px-4 sm:px-14 py-4 border-b border-black">
         <Image src="/assets/logo.png" width={120} height={120} alt="Logo" />

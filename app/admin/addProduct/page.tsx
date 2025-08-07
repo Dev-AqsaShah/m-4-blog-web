@@ -74,15 +74,17 @@ const Page: React.FC = () => {
     }
   };
 
-  return (
+  return(
+
     <form
-      className="h-full pt-5 px-5 sm:pt-12 sm:pl-16 bg-blue-900 text-white"
+      className=" lg:pt-28 h-full pt-28 px-5 sm:pt-12 sm:pl-16 bg-gradient-to-b from-blue-800 to-black min-h-screen text-gray-300 font-semibold"
       onSubmit={onSubmitHandler}
     >
+
       <p className="text-xl">UPLOAD THUMBNAIL</p>
       <label htmlFor="image">
         <Image
-          className="mt-4 border-white rounded-lg text-gray-500 shadow-[0_0_15px_5px_rgba(255,255,255,1)]"
+          className="mt-4 border-2 border-black rounded-lg text-gray-500 shadow-[0_0_15px_5px_rgba(255,255,255,1)]"
           src={previewImage || "/assets/upload_area.png"}
           width={140}
           height={140}
@@ -96,7 +98,7 @@ const Page: React.FC = () => {
         name="title"
         onChange={onChangeHandler}
         value={data.title}
-        className="w-full sm:w-[500px] mt-4 px-4 py-3 border border-white rounded-lg text-gray-500 shadow-[0_0_15px_5px_rgba(255,255,255,1)]"
+        className="w-full sm:w-[500px] mt-4 px-4 py-3 border-2 border-black rounded-lg text-gray-500 shadow-[0_0_15px_5px_rgba(255,255,255,1)]"
         type="text"
         placeholder="Type here"
         required
@@ -107,7 +109,7 @@ const Page: React.FC = () => {
         name="description"
         onChange={onChangeHandler}
         value={data.description}
-        className="w-full sm:w-[500px] mt-4 px-4 py-3 border border-white rounded-lg text-gray-500 shadow-[0_0_15px_5px_rgba(255,255,255,1)]"
+        className="w-full sm:w-[500px] mt-4 px-4 py-3 border-2 border-black rounded-lg text-gray-500 shadow-[0_0_15px_5px_rgba(255,255,255,1)]"
         placeholder="Write content here"
         rows={6}
         required
@@ -118,7 +120,7 @@ const Page: React.FC = () => {
         name="category"
         onChange={onChangeHandler}
         value={data.category}
-        className="w-40 mt-4 px-4 py-3 border border-white rounded-lg text-gray-500 shadow-[0_0_15px_5px_rgba(255,255,255,1)]"
+        className="w-40 mt-4 px-4 py-3 border-2 border-black rounded-lg text-gray-500 shadow-[0_0_15px_5px_rgba(255,255,255,1)]"
       >
         <option value="Animals">Animals</option>
         <option value="Plants">Plants</option>
@@ -131,7 +133,7 @@ const Page: React.FC = () => {
       <br />
       <button
         type="submit"
-        className="mt-8 mb-4 w-40 h-12 bg-blue-900 text-white rounded-full border border-white shadow-[0_0_15px_5px_rgba(255,255,255,1)]"
+        className="mt-8 mb-4 w-40 h-12 bg-blue-900 text-white rounded-full border-2 border-black shadow-[0_0_15px_5px_rgba(255,255,255,1)]"
       >
         ADD
       </button>

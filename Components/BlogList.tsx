@@ -48,7 +48,7 @@ const BlogList = () => {
       {/* Category Filter */}
       <div className="flex flex-wrap justify-center gap-4 mb-10">
         {categories.map((category) => (
-         <button
+        <button
   key={category}
   onClick={() => filterByCategory(category)}
   className={`px-5 py-2 rounded-full text-sm sm:text-base font-medium transition-all duration-300 
