@@ -32,7 +32,7 @@ const BlogItem: React.FC<BlogItemProps> = ({
       <div className="mt-4">
         <a
           href={`/blogs/${id}`}
-          className="text-2xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+          className="text-2xl font-semibold text-gray-900 hover:text-blue-600 transition-colors "
         >
           {title}
         </a>
