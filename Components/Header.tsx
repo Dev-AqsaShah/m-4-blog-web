@@ -31,7 +31,7 @@ const Header: React.FC = () => {
   };
 
   const slideData: SlideData[] = [
-    { id: 0, img: "/assets/home1.jpg" },
+    { id: 0, img: "/assets/h1.jpeg" },
     { id: 1, img: "/assets/artsblog1.webp" },
     { id: 2, img: "/assets/home3.jpeg" },
     { id: 3, img: "/assets/home4.webp" },
@@ -54,12 +54,13 @@ const Header: React.FC = () => {
       } else {
         toast.error("Something went wrong. Please try again.");
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error("Error submitting the form. Please try again.");
     }
   };
   return (
-    <div className="relative h-screen overflow-hidden">
+    <div className="bg-black relative  overflow-hidden">
       {/* Background Image Slider */}
       <div className="absolute top-0 left-0 w-full h-full z-0">
         <Slider {...settings}>
