@@ -41,11 +41,12 @@
 // }
 
 
+
+
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
 
-// ✅ Correct type for context params
 type Params = {
   params: {
     filename: string;
@@ -75,13 +76,10 @@ export async function GET(req: NextRequest, { params }: Params) {
         ? "image/webp"
         : "application/octet-stream";
 
-    // ✅ Convert Buffer → ArrayBuffer so NextResponse accepts it
-    const arrayBuffer = fileBuffer.buffer.slice(
-      fileBuffer.byteOffset,
-      fileBuffer.byteOffset + fileBuffer.byteLength
-    );
+    // ✅ Ensure it's a plain Uint8Array so NextResponse accepts it
+    const uint8Array = new Uint8Array(fileBuffer);
 
-    return new NextResponse(arrayBuffer, {
+    return new NextResponse(uint8Array, {
       headers: {
         "Content-Type": mimeType,
         "Content-Disposition": `inline; filename="${filename}"`,
