@@ -41,8 +41,6 @@
 // }
 
 
-
-
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
@@ -73,8 +71,10 @@ export async function GET(
         ? "image/webp"
         : "application/octet-stream";
 
-    // ✅ Convert to Uint8Array (Vercel safe)
-    return new NextResponse(new Uint8Array(fileBuffer), {
+    // ✅ Convert to Uint8Array so Vercel accepts it
+    const uint8Array = new Uint8Array(fileBuffer);
+
+    return new NextResponse(uint8Array, {
       headers: {
         "Content-Type": mimeType,
         "Content-Disposition": `inline; filename="${filename}"`,
