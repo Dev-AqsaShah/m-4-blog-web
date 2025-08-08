@@ -40,16 +40,15 @@
 //   }
 // }
 
-
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { filename: string } }
-): Promise<NextResponse> {
-  const { filename } = params;
+  context: { params: { filename: string } }
+) {
+  const { filename } = context.params;
 
   const baseDir =
     process.env.NODE_ENV === "development"
@@ -71,13 +70,15 @@ export async function GET(
         ? "image/webp"
         : "application/octet-stream";
 
-    // ✅ Convert to Uint8Array so Vercel accepts it
-    const uint8Array = new Uint8Array(fileBuffer);
+    const arrayBuffer = fileBuffer.buffer.slice(
+      fileBuffer.byteOffset,
+      fileBuffer.byteOffset + fileBuffer.byteLength
+    ) as ArrayBuffer;
 
-    return new NextResponse(uint8Array, {
+    return new NextResponse(arrayBuffer, {
       headers: {
         "Content-Type": mimeType,
-        "Content-Disposition": `inline; filename="${filename}"`,
+        "Content-Disposition": inline; filename="${filename}",
       },
     });
   } catch (err) {
