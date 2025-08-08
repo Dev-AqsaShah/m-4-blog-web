@@ -108,7 +108,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import Footer from "@/components/Footer";
+import Footer from "@/Components/Footer";
 
 type Blog = {
   _id: string;
