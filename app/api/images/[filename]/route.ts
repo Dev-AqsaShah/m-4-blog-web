@@ -44,23 +44,54 @@
 
 import { NextRequest } from "next/server";
 import path from "path";
-import fs from "fs";
+import { promises as fs } from "fs";
+
+interface Params {
+  filename: string;
+}
+
+function getMimeType(ext: string): string {
+  switch (ext) {
+    case ".png": return "image/png";
+    case ".jpg":
+    case ".jpeg": return "image/jpeg";
+    case ".webp": return "image/webp";
+    case ".gif": return "image/gif";
+    case ".svg": return "image/svg+xml";
+    default: return "application/octet-stream";
+  }
+}
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { filename: string } }
+  _req: NextRequest,
+  { params }: { params: Params }
 ) {
-  const filePath = path.join(process.cwd(), "public", "images", params.filename);
+  const { filename } = params;
+
+  // ✅ Fixed file path (uploads folder)
+  const baseDir =
+    process.env.NODE_ENV === "development"
+      ? path.join(process.cwd(), "public/uploads")
+      : "/tmp/assets";
+
+  const filePath = path.join(baseDir, filename);
 
   try {
-    const fileBuffer = fs.readFileSync(filePath);
+    // ✅ Async file read
+    const fileBuffer = await fs.readFile(filePath);
+
+    // ✅ Auto MIME type detection
+    const ext = path.extname(filename).toLowerCase();
+    const mimeType = getMimeType(ext);
+
     return new Response(fileBuffer, {
       headers: {
-        "Content-Type": "image/jpeg", // yahan apne file type ka mime set karein
+        "Content-Type": mimeType,
+        "Content-Disposition": `inline; filename="${filename}"`,
       },
     });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-    return new Response("File not found", { status: 404 });
+  } catch (err) {
+    console.error("Error loading image:", err);
+    return new Response("Image not found", { status: 404 });
   }
 }
