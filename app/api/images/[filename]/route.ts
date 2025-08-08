@@ -41,16 +41,19 @@
 // }
 
 
-
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
 
-export async function GET(
-  req: NextRequest,
-  context: { params: { filename: string } }
-) {
-  const { filename } = context.params;
+// ✅ Correct type for context params
+type Params = {
+  params: {
+    filename: string;
+  };
+};
+
+export async function GET(req: NextRequest, { params }: Params) {
+  const { filename } = params;
 
   const baseDir =
     process.env.NODE_ENV === "development"
@@ -72,7 +75,7 @@ export async function GET(
         ? "image/webp"
         : "application/octet-stream";
 
-    // ✅ Convert Buffer to ArrayBuffer
+    // ✅ Convert Buffer → ArrayBuffer so NextResponse accepts it
     const arrayBuffer = fileBuffer.buffer.slice(
       fileBuffer.byteOffset,
       fileBuffer.byteOffset + fileBuffer.byteLength
