@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import BlogItem from "./BlogItem";
 import axios from "axios";
@@ -6,12 +8,11 @@ interface Blog {
   _id: string;
   image: string;
   title: string;
-  description: string;
   category: string;
   author: string;
 }
 
-const BlogList = () => {
+const BlogList: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [filteredData, setFilteredData] = useState<Blog[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("All");
@@ -48,20 +49,19 @@ const BlogList = () => {
       {/* Category Filter */}
       <div className="flex flex-wrap justify-center gap-4 mb-10">
         {categories.map((category) => (
-        <button
-  key={category}
-  onClick={() => filterByCategory(category)}
-  className={`px-5 py-2 rounded-full text-sm sm:text-base font-medium transition-all duration-300 
-    ${
-      activeCategory === category
-        ? "bg-white text-black border-2 border-white shadow-[0_0_10px_2px_white]"
-        : "bg-black text-white border border-white hover:bg-white hover:text-black shadow-[0_0_10px_4px_white]"
-    }
-  `}
->
-  {category}
-</button>
-
+          <button
+            key={category}
+            onClick={() => filterByCategory(category)}
+            className={`px-5 py-2 rounded-full text-sm sm:text-base font-medium transition-all duration-300 
+              ${
+                activeCategory === category
+                  ? "bg-white text-black border-2 border-white shadow-[0_0_10px_2px_white]"
+                  : "bg-black text-white border border-white hover:bg-white hover:text-black shadow-[0_0_10px_4px_white]"
+              }
+            `}
+          >
+            {category}
+          </button>
         ))}
       </div>
 
@@ -74,7 +74,6 @@ const BlogList = () => {
               id={item._id}
               image={`${BASE_URL}${item.image.startsWith("/") ? "" : "/"}${item.image}`}
               title={item.title}
-              description={item.description}
               category={item.category}
               author={item.author}
             />
