@@ -78,7 +78,7 @@ export async function GET(
     return new NextResponse(arrayBuffer, {
       headers: {
         "Content-Type": mimeType,
-        "Content-Disposition": inline; filename="${filename}",
+        "Content-Disposition": `inline; filename="${filename}"`,
       },
     });
   } catch (err) {
