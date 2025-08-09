@@ -3,14 +3,12 @@ import { readFile } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 
-export async function GET(
-  request: NextRequest,
-  context: { params: { filename: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
-    const { filename } = context.params;
+    // Extract filename from the request URL
+    const { pathname } = new URL(request.url);
+    const filename = decodeURIComponent(pathname.split("/").pop() || "");
 
-    // Detect Vercel environment
     const isVercel = process.env.VERCEL === "1";
     const filePath = isVercel
       ? path.join("/tmp/assets", filename)
