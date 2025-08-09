@@ -43,27 +43,45 @@
 
 
 
-import { NextRequest } from "next/server";
+
+
 import fs from "fs";
 import path from "path";
+import { NextRequest } from "next/server";
 
 export async function GET(
   _req: NextRequest,
   context: { params: { filename: string } }
 ) {
-  const { filename } = context.params;
-  const filePath = path.join(process.cwd(), "uploads", filename);
-
   try {
+    const { filename } = context.params;
+
+    // File ka path banaye
+    const filePath = path.join(process.cwd(), "public", "uploads", filename);
+
+    // Check kare file exist karti hai ya nahi
+    if (!fs.existsSync(filePath)) {
+      return new Response(JSON.stringify({ error: "File not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // File read kare
     const fileBuffer = fs.readFileSync(filePath);
 
-    // ✅ Directly return Buffer as Response
+    // Content type guess kare extension se
+    const ext = path.extname(filename).toLowerCase();
+    let contentType = "application/octet-stream";
+    if (ext === ".jpg" || ext === ".jpeg") contentType = "image/jpeg";
+    if (ext === ".png") contentType = "image/png";
+
     return new Response(fileBuffer, {
-      headers: { "Content-Type": "image/jpeg" },
+      headers: { "Content-Type": contentType },
     });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: "File not found" }), {
-      status: 404,
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "Server error" }), {
+      status: 500,
       headers: { "Content-Type": "application/json" },
     });
   }
