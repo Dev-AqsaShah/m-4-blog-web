@@ -1,88 +1,57 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// import { NextRequest, NextResponse } from "next/server";
-// import path from "path";
-// import { promises as fs } from "fs";
-
-// export async function GET(
-//   req: NextRequest,
-//   { params }: { params: { filename: string } }
-// ) {
-//   const { filename } = params;
-
-//   const baseDir =
-//     process.env.NODE_ENV === "development"
-//       ? path.join(process.cwd(), "public/uploads")
-//       : "/tmp/assets";
-
-//   const filePath = path.join(baseDir, filename);
-
-//   try {
-//     const fileBuffer = await fs.readFile(filePath);
-
-//     const ext = path.extname(filename).toLowerCase();
-//     const mimeType =
-//       ext === ".png"
-//         ? "image/png"
-//         : ext === ".jpg" || ext === ".jpeg"
-//         ? "image/jpeg"
-//         : ext === ".webp"
-//         ? "image/webp"
-//         : "application/octet-stream";
-
-//     return new NextResponse(fileBuffer, {
-//       headers: {
-//         "Content-Type": mimeType,
-//         "Content-Disposition": `inline; filename="${filename}"`,
-//       },
-//     });
-//   } catch (err) {
-//     console.error("Error loading image:", err);
-//     return new NextResponse("Image not found", { status: 404 });
-//   }
-// }
-
-
-
-
-
-import fs from "fs";
+import { NextResponse } from "next/server";
+import { readFile } from "fs/promises";
+import { existsSync } from "fs";
 import path from "path";
-import { NextRequest } from "next/server";
+
+// Detect if running on Vercel
+const isVercel = process.env.VERCEL === "1";
 
 export async function GET(
-  _req: NextRequest,
-  context: { params: { filename: string } }
+  request: Request,
+  { params }: { params: { filename: string } }
 ) {
   try {
-    const { filename } = context.params;
+    const { filename } = params;
 
-    // File ka path banaye
-    const filePath = path.join(process.cwd(), "public", "uploads", filename);
-
-    // Check kare file exist karti hai ya nahi
-    if (!fs.existsSync(filePath)) {
-      return new Response(JSON.stringify({ error: "File not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!filename) {
+      return NextResponse.json({ error: "Filename is required" }, { status: 400 });
     }
 
-    // File read kare
-    const fileBuffer = fs.readFileSync(filePath);
+    // Decide where the image is stored based on environment
+    let filePath: string;
+    if (isVercel) {
+      // On Vercel → temporary storage
+      filePath = path.join("/tmp/assets", filename);
+    } else {
+      // Local dev → public/uploads
+      filePath = path.join(process.cwd(), "public/uploads", filename);
+    }
 
-    // Content type guess kare extension se
+    // Ensure file exists
+    if (!existsSync(filePath)) {
+      return NextResponse.json({ error: "Image not found" }, { status: 404 });
+    }
+
+    // Read the file
+    const fileBuffer = await readFile(filePath);
+
+    // Determine correct MIME type
     const ext = path.extname(filename).toLowerCase();
     let contentType = "application/octet-stream";
     if (ext === ".jpg" || ext === ".jpeg") contentType = "image/jpeg";
-    if (ext === ".png") contentType = "image/png";
+    else if (ext === ".png") contentType = "image/png";
+    else if (ext === ".gif") contentType = "image/gif";
+    else if (ext === ".webp") contentType = "image/webp";
 
-    return new Response(fileBuffer, {
-      headers: { "Content-Type": contentType },
+    return new NextResponse(fileBuffer, {
+      headers: {
+        "Content-Type": contentType,
+        "Content-Disposition": `inline; filename="${filename}"`,
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: "Server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  } catch (error) {
+    console.error("❌ Error serving image:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

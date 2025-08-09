@@ -27,6 +27,30 @@ const connectDB = async () => {
 // Detect environment
 const isVercel = process.env.VERCEL === "1";
 
+// Helper to save image in correct place and return API URL
+async function saveImage(image: File): Promise<string> {
+  const imageByteData = await image.arrayBuffer();
+  const buffer = Buffer.from(imageByteData);
+  const timestamp = Date.now();
+  const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
+  let imagePath: string;
+
+  if (isVercel) {
+    const tmpDir = "/tmp/assets";
+    if (!existsSync(tmpDir)) await mkdir(tmpDir, { recursive: true });
+    imagePath = path.join(tmpDir, imageName);
+  } else {
+    const uploadDir = path.join(process.cwd(), "public/uploads");
+    if (!existsSync(uploadDir)) await mkdir(uploadDir, { recursive: true });
+    imagePath = path.join(uploadDir, imageName);
+  }
+
+  await writeFile(imagePath, buffer);
+
+  // Always return same URL format
+  return `/api/images/${imageName}`;
+}
+
 // 🟢 GET: Fetch all or by ID
 export async function GET(request: NextRequest) {
   try {
@@ -57,31 +81,12 @@ export async function POST(request: NextRequest) {
     await connectDB();
     const formData = await request.formData();
     const image = formData.get("image") as File | null;
-    let imageUrl = null;
 
-    if (image) {
-      const imageByteData = await image.arrayBuffer();
-      const buffer = Buffer.from(imageByteData);
-      const timestamp = Date.now();
-      const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
-      let imagePath: string;
-
-      if (isVercel) {
-        const tmpDir = "/tmp/assets";
-        if (!existsSync(tmpDir)) await mkdir(tmpDir, { recursive: true });
-        imagePath = path.join(tmpDir, imageName);
-        imageUrl = `/api/images/${imageName}`;
-      } else {
-        const uploadDir = path.join(process.cwd(), "public/uploads");
-        if (!existsSync(uploadDir)) await mkdir(uploadDir, { recursive: true });
-        imagePath = path.join(uploadDir, imageName);
-        imageUrl = `/uploads/${imageName}`;
-      }
-
-      await writeFile(imagePath, buffer);
-    } else {
+    if (!image) {
       return NextResponse.json({ success: false, error: "Image file is required" }, { status: 400 });
     }
+
+    const imageUrl = await saveImage(image);
 
     const blogData = {
       title: formData.get("title"),
@@ -139,29 +144,11 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Blog not found" }, { status: 404 });
     }
 
-    const image = formData.get("image") as File | null;
     let imageUrl = existingBlog.image;
+    const image = formData.get("image") as File | null;
 
     if (image) {
-      const imageByteData = await image.arrayBuffer();
-      const buffer = Buffer.from(imageByteData);
-      const timestamp = Date.now();
-      const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
-      let imagePath: string;
-
-      if (isVercel) {
-        const tmpDir = "/tmp/assets";
-        if (!existsSync(tmpDir)) await mkdir(tmpDir, { recursive: true });
-        imagePath = path.join(tmpDir, imageName);
-        imageUrl = `/api/images/${imageName}`;
-      } else {
-        const uploadDir = path.join(process.cwd(), "public/uploads");
-        if (!existsSync(uploadDir)) await mkdir(uploadDir, { recursive: true });
-        imagePath = path.join(uploadDir, imageName);
-        imageUrl = `/uploads/${imageName}`;
-      }
-
-      await writeFile(imagePath, buffer);
+      imageUrl = await saveImage(image);
     }
 
     const updatedData = {
