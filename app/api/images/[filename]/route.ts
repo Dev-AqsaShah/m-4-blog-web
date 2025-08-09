@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFile } from "fs/promises";
-import path from "path";
 import { existsSync } from "fs";
+import path from "path";
 
 export async function GET(
   request: NextRequest,
@@ -36,7 +36,10 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Error serving image:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("❌ Error serving image:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
