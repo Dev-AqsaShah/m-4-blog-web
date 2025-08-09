@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // import { NextRequest, NextResponse } from "next/server";
 // import path from "path";
 // import { promises as fs } from "fs";
@@ -42,27 +43,24 @@
 
 
 
-
+import { NextRequest } from "next/server";
 import fs from "fs";
 import path from "path";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { filename: string } }
+  _req: NextRequest,
+  context: { params: { filename: string } }
 ) {
-  const { filename } = params;
+  const { filename } = context.params;
   const filePath = path.join(process.cwd(), "uploads", filename);
 
   try {
     const fileBuffer = fs.readFileSync(filePath);
 
-    // ✅ Convert Node.js Buffer -> Uint8Array
-    const uint8Array = new Uint8Array(fileBuffer);
-
-    return new Response(uint8Array, {
+    // ✅ Directly return Buffer as Response
+    return new Response(fileBuffer, {
       headers: { "Content-Type": "image/jpeg" },
     });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return new Response(JSON.stringify({ error: "File not found" }), {
       status: 404,
