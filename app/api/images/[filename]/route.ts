@@ -5,7 +5,6 @@ import path from "path";
 
 export async function GET(request: NextRequest) {
   try {
-    // Extract filename from the request URL
     const { pathname } = new URL(request.url);
     const filename = decodeURIComponent(pathname.split("/").pop() || "");
 
@@ -34,7 +33,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("❌ Error serving image:", error);
+    console.error("Error serving image:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
