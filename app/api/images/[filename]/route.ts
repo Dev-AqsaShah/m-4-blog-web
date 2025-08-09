@@ -1,74 +1,13 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import path from "path";
-// import { promises as fs } from "fs";
-
-// export async function GET(
-//   req: NextRequest,
-//   { params }: { params: { filename: string } }
-// ) {
-//   const { filename } = params;
-
-//   const baseDir =
-//     process.env.NODE_ENV === "development"
-//       ? path.join(process.cwd(), "public/uploads")
-//       : "/tmp/assets";
-
-//   const filePath = path.join(baseDir, filename);
-
-//   try {
-//     const fileBuffer = await fs.readFile(filePath);
-
-//     const ext = path.extname(filename).toLowerCase();
-//     const mimeType =
-//       ext === ".png"
-//         ? "image/png"
-//         : ext === ".jpg" || ext === ".jpeg"
-//         ? "image/jpeg"
-//         : ext === ".webp"
-//         ? "image/webp"
-//         : "application/octet-stream";
-
-//     return new NextResponse(fileBuffer, {
-//       headers: {
-//         "Content-Type": mimeType,
-//         "Content-Disposition": `inline; filename="${filename}"`,
-//       },
-//     });
-//   } catch (err) {
-//     console.error("Error loading image:", err);
-//     return new NextResponse("Image not found", { status: 404 });
-//   }
-// }
-
-
-
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
 
-interface Params {
-  filename: string;
-}
-
-function getMimeType(ext: string): string {
-  switch (ext) {
-    case ".png": return "image/png";
-    case ".jpg":
-    case ".jpeg": return "image/jpeg";
-    case ".webp": return "image/webp";
-    case ".gif": return "image/gif";
-    case ".svg": return "image/svg+xml";
-    default: return "application/octet-stream";
-  }
-}
-
 export async function GET(
-  _req: NextRequest,
-  { params }: { params: Params }
+  req: NextRequest,
+  { params }: { params: { filename: string } }
 ) {
   const { filename } = params;
 
-  // ✅ Fixed file path (uploads folder)
   const baseDir =
     process.env.NODE_ENV === "development"
       ? path.join(process.cwd(), "public/uploads")
@@ -77,14 +16,19 @@ export async function GET(
   const filePath = path.join(baseDir, filename);
 
   try {
-    // ✅ Async file read
     const fileBuffer = await fs.readFile(filePath);
 
-    // ✅ Auto MIME type detection
     const ext = path.extname(filename).toLowerCase();
-    const mimeType = getMimeType(ext);
+    const mimeType =
+      ext === ".png"
+        ? "image/png"
+        : ext === ".jpg" || ext === ".jpeg"
+        ? "image/jpeg"
+        : ext === ".webp"
+        ? "image/webp"
+        : "application/octet-stream";
 
-    return new Response(fileBuffer, {
+    return new NextResponse(fileBuffer, {
       headers: {
         "Content-Type": mimeType,
         "Content-Disposition": `inline; filename="${filename}"`,
@@ -92,6 +36,53 @@ export async function GET(
     });
   } catch (err) {
     console.error("Error loading image:", err);
-    return new Response("Image not found", { status: 404 });
+    return new NextResponse("Image not found", { status: 404 });
   }
 }
+
+
+
+
+// import { NextRequest, NextResponse } from "next/server";
+// import path from "path";
+// import { promises as fs } from "fs";
+
+// export async function GET(
+//   req: NextRequest,
+//   { params }: { params: { filename: string } }
+// ) {
+//   try {
+//     const { filename } = params;
+
+//     // Base directory for images
+//     const baseDir =
+//       process.env.NODE_ENV === "development"
+//         ? path.join(process.cwd(), "public", "images")
+//         : "/tmp/assets";
+
+//     const filePath = path.join(baseDir, filename);
+
+//     // Read the file
+//     const fileBuffer = await fs.readFile(filePath);
+
+//     // Detect MIME type
+//     const ext = path.extname(filename).toLowerCase();
+//     const mimeTypes: Record<string, string> = {
+//       ".png": "image/png",
+//       ".jpg": "image/jpeg",
+//       ".jpeg": "image/jpeg",
+//       ".webp": "image/webp",
+//     };
+//     const mimeType = mimeTypes[ext] || "application/octet-stream";
+
+//     return new NextResponse(fileBuffer, {
+//       headers: {
+//         "Content-Type": mimeType,
+//         "Content-Disposition": `inline; filename="${filename}"`,
+//       },
+//     });
+//   } catch (error) {
+//     console.error("❌ Error loading image:", error);
+//     return new NextResponse("Image not found", { status: 404 });
+//   }
+// }
