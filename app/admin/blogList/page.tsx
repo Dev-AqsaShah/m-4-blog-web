@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Image from "next/image"; // ✅ Import next/image
+import Image from "next/image";
 
 interface Blog {
   _id: string;
@@ -37,7 +37,7 @@ const Page: React.FC = () => {
       return;
     }
 
-    // ✅ Confirmation alert before deleting
+    // Alert before delete
     const confirmed = window.confirm(
       "Are you sure you want to delete this blog?"
     );
@@ -63,6 +63,14 @@ const Page: React.FC = () => {
   useEffect(() => {
     fetchBlogs();
   }, [fetchBlogs]);
+
+  // Function to get correct image URL
+  const getImageUrl = (url?: string) => {
+    if (!url) return "";
+    return url.startsWith("http")
+      ? url
+      : `${process.env.NEXT_PUBLIC_BASE_URL || ""}${url}`;
+  };
 
   return (
     <div className="lg:pt-28 p-5 sm:p-12 pt-24 bg-gradient-to-b from-gray-900 to-black min-h-screen text-white">
@@ -91,7 +99,7 @@ const Page: React.FC = () => {
                 <td className="px-6 py-4">
                   {blog.imageUrl ? (
                     <Image
-                      src={blog.imageUrl}
+                      src={getImageUrl(blog.imageUrl)}
                       alt={blog.title}
                       width={80}
                       height={80}
