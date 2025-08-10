@@ -64,12 +64,17 @@ const Page: React.FC = () => {
     fetchBlogs();
   }, [fetchBlogs]);
 
-  // Function to get correct image URL
+  // ✅ FIX: Cloudinary-safe image URL handling
   const getImageUrl = (url?: string) => {
     if (!url) return "";
-    return url.startsWith("http")
-      ? url
-      : `${process.env.NEXT_PUBLIC_BASE_URL || ""}${url}`;
+
+    // If the URL starts with "http" or "//" — return as is (Cloudinary or external)
+    if (url.startsWith("http") || url.startsWith("//")) {
+      return url;
+    }
+
+    // Otherwise, treat as local file path
+    return `${process.env.NEXT_PUBLIC_BASE_URL || ""}${url}`;
   };
 
   return (

@@ -18,10 +18,13 @@ export async function GET(request: NextRequest) {
     const isVercel = process.env.VERCEL === "1";
 
     if (isVercel) {
-      // On Vercel, return Cloudinary image URL
-      const cloudinaryUrl = cloudinary.url(filename, {
-        secure: true,
-      });
+      // ✅ If already a full Cloudinary URL, just redirect to it
+      if (filename.startsWith("http")) {
+        return NextResponse.redirect(filename);
+      }
+
+      // Otherwise, build Cloudinary URL from public_id
+      const cloudinaryUrl = cloudinary.url(filename, { secure: true });
       return NextResponse.redirect(cloudinaryUrl);
     }
 
