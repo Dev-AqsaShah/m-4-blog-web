@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import BlogTableItem from "@/Components/adminComponents/BlogTableItem";
 import { toast } from "react-toastify";
+import Image from "next/image"; // ✅ Import next/image
 
 interface Blog {
   _id: string;
@@ -38,7 +38,9 @@ const Page: React.FC = () => {
     }
 
     // ✅ Confirmation alert before deleting
-    const confirmed = window.confirm("Are you sure you want to delete this blog?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this blog?"
+    );
     if (!confirmed) return;
 
     try {
@@ -88,10 +90,12 @@ const Page: React.FC = () => {
               >
                 <td className="px-6 py-4">
                   {blog.imageUrl ? (
-                    <img
+                    <Image
                       src={blog.imageUrl}
                       alt={blog.title}
-                      className="w-20 h-20 object-cover rounded-md shadow"
+                      width={80}
+                      height={80}
+                      className="object-cover rounded-md shadow"
                     />
                   ) : (
                     <span className="text-gray-500 italic">No Image</span>
