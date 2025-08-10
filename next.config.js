@@ -7,13 +7,17 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        // Extract protocol (without the colon)
+        // Your existing BASE_URL pattern (local + Vercel)
         protocol: urlObj.protocol.replace(":", ""),
-        // Extract the hostname
         hostname: urlObj.hostname,
-        // Use port if available
         port: urlObj.port || "",
-        // Allow any path
+        pathname: "/**",
+      },
+      {
+        // Allow Cloudinary images
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        port: "",
         pathname: "/**",
       },
     ],
