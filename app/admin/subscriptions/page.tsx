@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import SubsTableItem from "@/Components/adminComponents/SubsTableItem";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -18,9 +17,6 @@ const Page: React.FC = () => {
     ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/email`
     : "/api/email";
 
-  console.log("API URL:", API_URL); // Debugging
-
-  // Wrap fetchEmails in useCallback
   const fetchEmails = useCallback(async () => {
     try {
       const response = await axios.get(API_URL);
@@ -38,6 +34,8 @@ const Page: React.FC = () => {
   }, [fetchEmails]);
 
   const deleteEmail = async (mongoId: string) => {
+    if (!window.confirm("Are you sure you want to delete this email?")) return;
+
     try {
       const response = await axios.delete(API_URL, {
         params: { id: mongoId },
@@ -60,25 +58,46 @@ const Page: React.FC = () => {
   }
 
   return (
-    <div className="lg:pt-28 flex-1 pt-28 px-5 sm:pt-12 sm:pl-16 bg-gradient-to-b from-blue-800 to-black min-h-screen text-white">
-      <h1>All Subscriptions</h1>
-      <div className="relative max-w-[600px] h-[80vh] overflow-x-auto mt-4 border-2 border-white scrollbar-hide">
-        <table className="w-full text-sm text-white">
-          <thead className="text-xs text-left text-white uppercase ">
+    <div className="lg:pt-28 p-5 sm:p-12 pt-24 bg-gradient-to-b from-gray-900 to-black min-h-screen text-white">
+      <h1 className="text-3xl font-bold mb-8 border-b border-gray-700 pb-2">
+        📩 All Subscriptions
+      </h1>
+
+      <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-700 max-w-[600px]">
+        <table className="w-full text-sm text-left">
+          <thead className="bg-gray-800 text-gray-300 uppercase text-xs">
             <tr>
-              <th scope="col" className="px-6 py-3">Email Subscription</th>
-              <th scope="col" className="px-6 py-3">Action</th>
+              <th className="px-6 py-4">Email Subscription</th>
+              <th className="px-6 py-4 text-center">Action</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-700">
             {emails.map((item) => (
-              <SubsTableItem
+              <tr
                 key={item._id}
-                mongoId={item._id}
-                deleteEmail={deleteEmail}
-                email={item.email}
-              />
+                className="hover:bg-gray-800 transition-colors duration-150"
+              >
+                <td className="px-6 py-4">{item.email}</td>
+                <td className="px-6 py-4 flex items-center justify-center">
+                  <button
+                    onClick={() => deleteEmail(item._id)}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md shadow-md transition-colors duration-200"
+                  >
+                    🗑 Delete
+                  </button>
+                </td>
+              </tr>
             ))}
+            {emails.length === 0 && (
+              <tr>
+                <td
+                  colSpan={2}
+                  className="px-6 py-8 text-center text-gray-500 italic"
+                >
+                  No subscriptions found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

@@ -5,6 +5,7 @@ import { existsSync } from "fs";
 import mongoose from "mongoose";
 import BlogModel from "@/lib/models/BlogModel";
 import path from "path";
+import { v2 as cloudinary } from "cloudinary";
 
 // 🔹 MongoDB Connection
 const MONGODB_URI = process.env.MONGO_URI;
@@ -27,28 +28,42 @@ const connectDB = async () => {
 // Detect environment
 const isVercel = process.env.VERCEL === "1";
 
-// Helper to save image in correct place and return API URL
+// 🔹 Configure Cloudinary (for Vercel/prod)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "",
+  api_key: process.env.CLOUDINARY_API_KEY || "",
+  api_secret: process.env.CLOUDINARY_API_SECRET || "",
+});
+
+// Helper to save image in correct place and return URL
 async function saveImage(image: File): Promise<string> {
   const imageByteData = await image.arrayBuffer();
   const buffer = Buffer.from(imageByteData);
   const timestamp = Date.now();
-  const imageName = `${timestamp}_${image.name.replace(/\s+/g, "_")}`;
-  let imagePath: string;
+  const safeName = image.name.replace(/\s+/g, "_");
 
   if (isVercel) {
-    const tmpDir = "/tmp/assets";
-    if (!existsSync(tmpDir)) await mkdir(tmpDir, { recursive: true });
-    imagePath = path.join(tmpDir, imageName);
+    // Upload to Cloudinary in production
+    const uploadResult = await new Promise<{ secure_url: string }>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "blogs", public_id: `${timestamp}_${safeName}` },
+        (error, result) => {
+          if (error || !result) return reject(error);
+          resolve(result as { secure_url: string });
+        }
+      );
+      stream.end(buffer);
+    });
+    return uploadResult.secure_url;
   } else {
+    // Save locally in dev
     const uploadDir = path.join(process.cwd(), "public/uploads");
     if (!existsSync(uploadDir)) await mkdir(uploadDir, { recursive: true });
-    imagePath = path.join(uploadDir, imageName);
+    const imageName = `${timestamp}_${safeName}`;
+    const imagePath = path.join(uploadDir, imageName);
+    await writeFile(imagePath, buffer);
+    return `/uploads/${imageName}`;
   }
-
-  await writeFile(imagePath, buffer);
-
-  // Always return same URL format
-  return `/api/images/${imageName}`;
 }
 
 // 🟢 GET: Fetch all or by ID
