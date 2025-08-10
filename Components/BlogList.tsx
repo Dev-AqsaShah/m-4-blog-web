@@ -42,7 +42,15 @@ const BlogList: React.FC = () => {
     }
   };
 
-  const categories = ["All", "Technology", "Traveling", "Animals", "Plants", "Arts", "Lifestyle"];
+  const categories = [
+    "All",
+    "Technology",
+    "Traveling",
+    "Animals",
+    "Plants",
+    "Arts",
+    "Lifestyle",
+  ];
 
   return (
     <div className="bg-gradient-to-b from-blue-950 to-black min-h-screen pt-6 pb-12 px-4 sm:px-8">
@@ -72,14 +80,20 @@ const BlogList: React.FC = () => {
             <BlogItem
               key={item._id}
               id={item._id}
-              image={`${BASE_URL}${item.image.startsWith("/") ? "" : "/"}${item.image}`}
+              image={
+                item.image.startsWith("http")
+                  ? item.image
+                  : `${BASE_URL}${item.image.startsWith("/") ? "" : "/"}${item.image}`
+              }
               title={item.title}
               category={item.category}
               author={item.author}
             />
           ))
         ) : (
-          <div className="col-span-full text-center text-gray-300 text-lg">No blogs available.</div>
+          <div className="col-span-full text-center text-gray-300 text-lg">
+            No blogs available.
+          </div>
         )}
       </div>
     </div>
