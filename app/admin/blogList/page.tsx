@@ -139,8 +139,7 @@ const Page: React.FC = () => {
                 </td>
               </tr>
             ))}
-            {blogs.length === 0 && (
-              <tr>
+            {blogs.length === 0 && ( <tr>
                 <td
                   colSpan={5}
                   className="px-6 py-8 text-center text-gray-500 italic"

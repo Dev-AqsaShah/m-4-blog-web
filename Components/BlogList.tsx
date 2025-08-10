@@ -17,8 +17,6 @@ const BlogList: React.FC = () => {
   const [filteredData, setFilteredData] = useState<Blog[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("All");
 
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
-
   const fetchBlogs = async () => {
     try {
       const response = await axios.get<{ blogs: Blog[] }>("/api/blog");
@@ -80,11 +78,7 @@ const BlogList: React.FC = () => {
             <BlogItem
               key={item._id}
               id={item._id}
-              image={
-                item.image.startsWith("http")
-                  ? item.image
-                  : `${BASE_URL}${item.image.startsWith("/") ? "" : "/"}${item.image}`
-              }
+              image={item.image}
               title={item.title}
               category={item.category}
               author={item.author}

@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const isVercel = process.env.VERCEL === "1";
 
     if (isVercel) {
-      // ✅ If already a full Cloudinary URL, just redirect to it
+      // If already a full Cloudinary URL, just redirect to it
       if (filename.startsWith("http")) {
         return NextResponse.redirect(filename);
       }

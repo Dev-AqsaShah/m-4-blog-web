@@ -15,7 +15,7 @@ type Blog = {
   authorImage?: string;
 };
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") || "";
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dm5vap7hs";
 
 export default function BlogDetailPage() {
   const params = useParams();
@@ -52,15 +52,12 @@ export default function BlogDetailPage() {
     fetchBlog();
   }, [id]);
 
-  // ✅ Ensure Cloudinary URLs are returned as-is
   const getImageUrl = (image: string) => {
-    if (/^https?:\/\/res\.cloudinary\.com/.test(image)) {
-      return image; // Cloudinary URL → return directly
-    }
-    if (/^https?:\/\//.test(image)) {
-      return image; // Any other full URL → return directly
-    }
-    return `${BASE_URL}${image.startsWith("/") ? "" : "/"}${image}`;
+    if (!image) return "";
+
+    if (/^https?:\/\//.test(image)) return image;
+
+    return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${image.replace(/^\/+/, "")}`;
   };
 
   if (loading) {
@@ -115,14 +112,11 @@ export default function BlogDetailPage() {
 
           {/* Author & Category */}
           <p className="text-gray-300 text-sm mb-6">
-            By <span className="font-semibold text-white">{blog?.author}</span>{" "}
-            | <span className="italic">{blog?.category}</span>
+            By <span className="font-semibold text-white">{blog?.author}</span> | <span className="italic">{blog?.category}</span>
           </p>
 
           {/* Description */}
-          <p className="text-white text-base sm:text-lg leading-relaxed">
-            {blog?.description}
-          </p>
+          <p className="text-white text-base sm:text-lg leading-relaxed">{blog?.description}</p>
         </div>
       </div>
 
