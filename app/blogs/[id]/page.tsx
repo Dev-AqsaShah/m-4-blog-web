@@ -92,18 +92,18 @@ export default function BlogDetailPage() {
       <div className="flex justify-center items-start min-h-screen px-4 pt-20 pb-16 bg-blue-900">
         <div className="w-full max-w-3xl p-6 sm:p-8 bg-gradient-to-t from-black to-blue-900 rounded-2xl border-2 border-white transition-all duration-500 shadow-[0_0_60px_rgba(255,255,255,0.9)] mb-10">
           {/* Image */}
-          {blog?.image && (
-            <div className="overflow-hidden rounded-xl relative w-[280px] h-[350px] sm:h-[220px] md:h-[250px] lg:h-[380px] mb-6 shadow-md">
-              <Image
-                src={getImageUrl(blog.image)}
-                alt={blog.title}
-                fill
-                className="object-cover border-4 border-black shadow-[0_0_60px_rgba(255,255,255,0.9)] transition-transform duration-300 ease-in-out hover:scale-105"
-                sizes="(max-width: 768px) 100vw, 768px"
-                priority
-              />
-            </div>
-          )}
+{blog?.image && (
+  <div className="relative w-full max-w-4xl h-[450px] sm:h-[350px] md:h-[420px] lg:h-[500px] mx-auto mb-8 rounded-3xl shadow-lg overflow-hidden border-4 border-white transition-transform duration-300 ease-in-out hover:scale-105">
+    <Image
+      src={getImageUrl(blog.image)}
+      alt={blog.title}
+      fill
+      className="object-cover"
+      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
+      priority
+    />
+  </div>
+)}
 
           {/* Title */}
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">
