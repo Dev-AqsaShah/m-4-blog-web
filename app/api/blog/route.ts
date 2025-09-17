@@ -143,7 +143,7 @@ export async function DELETE(request: NextRequest) {
   }
 }
 
-🟡 PUT: Update a blog
+// 🟡 PUT: Update a blog
 export async function PUT(request: NextRequest) {
   try {
     await connectDB();
