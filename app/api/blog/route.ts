@@ -85,12 +85,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, blog });
   } catch (error) {
-    console.error("❌ Error fetching blogs:", error);
+    console.error("Error fetching blogs:", error);
     return NextResponse.json({ success: false, error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-// 🟠 POST: Create a new blog
+// POST: Create a new blog
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 🔴 DELETE: Remove a blog
+// DELETE: Remove a blog
 export async function DELETE(request: NextRequest) {
   try {
     await connectDB();
@@ -138,48 +138,48 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true, msg: "Blog deleted successfully" });
   } catch (error) {
-    console.error("❌ Error deleting blog:", error);
+    console.error("Error deleting blog:", error);
     return NextResponse.json({ success: false, error: "Failed to delete blog" }, { status: 500 });
   }
 }
 
-// 🟡 PUT: Update a blog
-export async function PUT(request: NextRequest) {
-  try {
-    await connectDB();
-    const formData = await request.formData();
-    const blogId = formData.get("id");
+//  PUT: Update a blog
+// export async function PUT(request: NextRequest) {
+//   try {
+//     await connectDB();
+//     const formData = await request.formData();
+//     const blogId = formData.get("id");
 
-    if (!blogId || !mongoose.Types.ObjectId.isValid(blogId as string)) {
-      return NextResponse.json({ success: false, error: "Invalid or missing blog ID" }, { status: 400 });
-    }
+//     if (!blogId || !mongoose.Types.ObjectId.isValid(blogId as string)) {
+//       return NextResponse.json({ success: false, error: "Invalid or missing blog ID" }, { status: 400 });
+//     }
 
-    const existingBlog = await BlogModel.findById(blogId);
-    if (!existingBlog) {
-      return NextResponse.json({ success: false, error: "Blog not found" }, { status: 404 });
-    }
+//     const existingBlog = await BlogModel.findById(blogId);
+//     if (!existingBlog) {
+//       return NextResponse.json({ success: false, error: "Blog not found" }, { status: 404 });
+//     }
 
-    let imageUrl = existingBlog.image;
-    const image = formData.get("image") as File | null;
+//     let imageUrl = existingBlog.image;
+//     const image = formData.get("image") as File | null;
 
-    if (image) {
-      imageUrl = await saveImage(image);
-    }
+//     if (image) {
+//       imageUrl = await saveImage(image);
+//     }
 
-    const updatedData = {
-      title: formData.get("title") || existingBlog.title,
-      description: formData.get("description") || existingBlog.description,
-      category: formData.get("category") || existingBlog.category,
-      author: formData.get("author") || existingBlog.author,
-      authorImage: formData.get("authorImage") || existingBlog.authorImage,
-      image: imageUrl,
-    };
+//     const updatedData = {
+//       title: formData.get("title") || existingBlog.title,
+//       description: formData.get("description") || existingBlog.description,
+//       category: formData.get("category") || existingBlog.category,
+//       author: formData.get("author") || existingBlog.author,
+//       authorImage: formData.get("authorImage") || existingBlog.authorImage,
+//       image: imageUrl,
+//     };
 
-    await BlogModel.findByIdAndUpdate(blogId, updatedData, { new: true });
+//     await BlogModel.findByIdAndUpdate(blogId, updatedData, { new: true });
 
-    return NextResponse.json({ success: true, msg: "Blog updated successfully" });
-  } catch (error) {
-    console.error("❌ Error updating blog:", error);
-    return NextResponse.json({ success: false, error: "Failed to update blog" }, { status: 500 });
-  }
-}
+//     return NextResponse.json({ success: true, msg: "Blog updated successfully" });
+//   } catch (error) {
+//     console.error("❌ Error updating blog:", error);
+//     return NextResponse.json({ success: false, error: "Failed to update blog" }, { status: 500 });
+//   }
+// }
