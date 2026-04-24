@@ -7,35 +7,26 @@ import BlogModel from "@/lib/models/BlogModel";
 import path from "path";
 import { v2 as cloudinary } from "cloudinary";
 
-// 🔹 MongoDB Connection
-const MONGODB_URI = process.env.MONGO_URI;
-if (!MONGODB_URI) {
-  throw new Error("MongoDB URI is not defined in environment variables");
-}
-
 const connectDB = async () => {
+  const MONGODB_URI = process.env.MONGO_URI;
+  if (!MONGODB_URI) throw new Error("MongoDB URI is not defined in environment variables");
   if (mongoose.connection.readyState === 1) return;
   try {
-    console.log("⏳ Connecting to MongoDB...");
     await mongoose.connect(MONGODB_URI, { dbName: "blogDatabase" });
-    console.log("✅ MongoDB Connected!");
   } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error);
+    console.error("MongoDB Connection Error:", error);
     throw new Error("Failed to connect to MongoDB");
   }
 };
 
-// Detect environment
 const isVercel = process.env.VERCEL === "1";
 
-// 🔹 Configure Cloudinary (for Vercel/prod)
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "",
   api_key: process.env.CLOUDINARY_API_KEY || "",
   api_secret: process.env.CLOUDINARY_API_SECRET || "",
 });
 
-// Helper to save image in correct place and return URL
 async function saveImage(image: File): Promise<string> {
   const imageByteData = await image.arrayBuffer();
   const buffer = Buffer.from(imageByteData);
@@ -43,7 +34,6 @@ async function saveImage(image: File): Promise<string> {
   const safeName = image.name.replace(/\s+/g, "_");
 
   if (isVercel) {
-    // Upload to Cloudinary in production
     const uploadResult = await new Promise<{ secure_url: string }>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         { folder: "blogs", public_id: `${timestamp}_${safeName}` },
@@ -56,17 +46,14 @@ async function saveImage(image: File): Promise<string> {
     });
     return uploadResult.secure_url;
   } else {
-    // Save locally in dev
     const uploadDir = path.join(process.cwd(), "public/uploads");
     if (!existsSync(uploadDir)) await mkdir(uploadDir, { recursive: true });
     const imageName = `${timestamp}_${safeName}`;
-    const imagePath = path.join(uploadDir, imageName);
-    await writeFile(imagePath, buffer);
+    await writeFile(path.join(uploadDir, imageName), buffer);
     return `/uploads/${imageName}`;
   }
 }
 
-// 🟢 GET: Fetch all or by ID
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
@@ -74,7 +61,7 @@ export async function GET(request: NextRequest) {
     const blogId = searchParams.get("id");
 
     if (!blogId || !mongoose.Types.ObjectId.isValid(blogId)) {
-      const blogs = await BlogModel.find({});
+      const blogs = await BlogModel.find({}).sort({ createdAt: -1 });
       return NextResponse.json({ success: true, blogs });
     }
 
@@ -82,7 +69,6 @@ export async function GET(request: NextRequest) {
     if (!blog) {
       return NextResponse.json({ success: false, error: "Blog not found" }, { status: 404 });
     }
-
     return NextResponse.json({ success: true, blog });
   } catch (error) {
     console.error("Error fetching blogs:", error);
@@ -90,7 +76,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST: Create a new blog
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
@@ -120,7 +105,44 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE: Remove a blog
+export async function PUT(request: NextRequest) {
+  try {
+    await connectDB();
+    const formData = await request.formData();
+    const blogId = formData.get("id") as string;
+
+    if (!blogId || !mongoose.Types.ObjectId.isValid(blogId)) {
+      return NextResponse.json({ success: false, error: "Invalid or missing blog ID" }, { status: 400 });
+    }
+
+    const existingBlog = await BlogModel.findById(blogId);
+    if (!existingBlog) {
+      return NextResponse.json({ success: false, error: "Blog not found" }, { status: 404 });
+    }
+
+    let imageUrl = existingBlog.image;
+    const image = formData.get("image") as File | null;
+    if (image && image.size > 0) {
+      imageUrl = await saveImage(image);
+    }
+
+    const updatedData = {
+      title: formData.get("title") || existingBlog.title,
+      description: formData.get("description") || existingBlog.description,
+      category: formData.get("category") || existingBlog.category,
+      author: formData.get("author") || existingBlog.author,
+      authorImage: formData.get("authorImage") || existingBlog.authorImage,
+      image: imageUrl,
+    };
+
+    await BlogModel.findByIdAndUpdate(blogId, updatedData, { new: true });
+    return NextResponse.json({ success: true, msg: "Blog updated successfully" });
+  } catch (error) {
+    console.error("Error updating blog:", error);
+    return NextResponse.json({ success: false, error: "Failed to update blog" }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   try {
     await connectDB();
@@ -135,51 +157,9 @@ export async function DELETE(request: NextRequest) {
     if (!deletedBlog) {
       return NextResponse.json({ success: false, error: "Blog not found" }, { status: 404 });
     }
-
     return NextResponse.json({ success: true, msg: "Blog deleted successfully" });
   } catch (error) {
     console.error("Error deleting blog:", error);
     return NextResponse.json({ success: false, error: "Failed to delete blog" }, { status: 500 });
   }
 }
-
-//  PUT: Update a blog
-// export async function PUT(request: NextRequest) {
-//   try {
-//     await connectDB();
-//     const formData = await request.formData();
-//     const blogId = formData.get("id");
-
-//     if (!blogId || !mongoose.Types.ObjectId.isValid(blogId as string)) {
-//       return NextResponse.json({ success: false, error: "Invalid or missing blog ID" }, { status: 400 });
-//     }
-
-//     const existingBlog = await BlogModel.findById(blogId);
-//     if (!existingBlog) {
-//       return NextResponse.json({ success: false, error: "Blog not found" }, { status: 404 });
-//     }
-
-//     let imageUrl = existingBlog.image;
-//     const image = formData.get("image") as File | null;
-
-//     if (image) {
-//       imageUrl = await saveImage(image);
-//     }
-
-//     const updatedData = {
-//       title: formData.get("title") || existingBlog.title,
-//       description: formData.get("description") || existingBlog.description,
-//       category: formData.get("category") || existingBlog.category,
-//       author: formData.get("author") || existingBlog.author,
-//       authorImage: formData.get("authorImage") || existingBlog.authorImage,
-//       image: imageUrl,
-//     };
-
-//     await BlogModel.findByIdAndUpdate(blogId, updatedData, { new: true });
-
-//     return NextResponse.json({ success: true, msg: "Blog updated successfully" });
-//   } catch (error) {
-//     console.error("❌ Error updating blog:", error);
-//     return NextResponse.json({ success: false, error: "Failed to update blog" }, { status: 500 });
-//   }
-// }

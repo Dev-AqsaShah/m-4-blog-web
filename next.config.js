@@ -1,20 +1,23 @@
 /** @type {import('next').NextConfig} */
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-const urlObj = new URL(baseUrl);
+let urlObj;
+try {
+  urlObj = new URL(baseUrl);
+} catch {
+  urlObj = new URL("http://localhost:3000");
+}
 
 const nextConfig = {
   images: {
     remotePatterns: [
       {
-        // Your existing BASE_URL pattern (local + Vercel)
         protocol: urlObj.protocol.replace(":", ""),
         hostname: urlObj.hostname,
         port: urlObj.port || "",
         pathname: "/**",
       },
       {
-        // Allow Cloudinary images
         protocol: "https",
         hostname: "res.cloudinary.com",
         port: "",

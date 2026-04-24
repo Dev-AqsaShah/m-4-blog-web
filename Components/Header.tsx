@@ -17,17 +17,20 @@ interface SlideData {
 
 const Header: React.FC = () => {
   const [email, setEmail] = useState<string>("");
+  const [submitting, setSubmitting] = useState(false);
 
   const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
-    speed: 500,
+    speed: 1200,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 4000,
     pauseOnHover: false,
     arrows: false,
+    fade: true,
+    cssEase: "ease-in-out",
   };
 
   const slideData: SlideData[] = [
@@ -39,107 +42,114 @@ const Header: React.FC = () => {
 
   const onSubmitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-  
     if (!email.trim()) {
       toast.error("Please enter a valid email.");
       return;
     }
-  
+    setSubmitting(true);
     try {
       const response = await axios.post("/api/email", { email });
-  
       if (response.data.success) {
         toast.success(response.data.message);
-        setEmail(""); // Clear input after success
+        setEmail("");
       } else {
         toast.error("Something went wrong. Please try again.");
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      toast.error("Error submitting the form. Please try again.");
+    } catch {
+      toast.error("Error submitting. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
+
   return (
-    <div className="bg-gradient-to-t from-blue-900 to-black relative  overflow-hidden">
+    <div className="relative h-screen min-h-[600px] overflow-hidden">
       {/* Background Image Slider */}
-      <div className="absolute top-0 left-0 w-full h-full z-0">
+      <div className="absolute inset-0 z-0">
         <Slider {...settings}>
           {slideData.map((item) => (
-            <div key={item.id} className="w-full h-full">
+            <div key={item.id} className="w-full h-screen">
               <Image
                 src={item.img}
-                alt={`Background ${item.id}`}
-                width={1500}
-                height={700}
-                className="w-full h-full object-cover"
+                alt={`Slide ${item.id + 1}`}
+                fill
+                className="object-cover"
+                priority={item.id === 0}
               />
             </div>
           ))}
         </Slider>
       </div>
 
-      {/* Dark Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black/40 z-10"></div>
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
 
-      {/* Content Section */}
-      <div className="relative z-20 h-full flex flex-col justify-between text-white px-5 md:px-12 lg:px-24 font-semibold ">
-        {/* Header Section */}
-        <div className="flex justify-between items-center pt-4 sm:pt-6 lg:pt-8">
+      {/* Navbar */}
+      <div className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center px-6 md:px-12 lg:px-20 py-5">
+        <Link href="/">
           <Image
             src="/assets/logo.png"
-            alt="Aqsa Life Dairy"
-            width={130}
-            height={80}
-            className="w-[90px] sm:w-[100px] md:w-[110px]"
+            alt="Life Unfolded"
+            width={120}
+            height={60}
+            className="w-[90px] sm:w-[110px] opacity-95 hover:opacity-100 transition-opacity"
           />
-          <Link href="/admin">
-            <button className="flex items-center gap-2 font-medium py-2 px-4 sm:py-3 sm:px-6 hover:scale-105 rounded-full border shadow-[0_0_15px_5px_rgba(255,255,255,1)] border-white bg-blue-900 text-white hover:bg-black hover:text-white transition-all transform ">
-              Get Started
-              <FaArrowRightLong />
-            </button>
-          </Link>
-        </div>
+        </Link>
+        <Link href="/admin">
+          <button className="flex items-center gap-2 text-sm font-medium py-2 px-5 rounded-full border border-white/30 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 hover:border-white/50 transition-all">
+            Admin
+            <FaArrowRightLong size={12} />
+          </button>
+        </Link>
+      </div>
 
-        {/* Main Content */}
-        <div className="text-center mt-10 sm:mt-16 lg:mt-20">
-          <h1 className="text-3xl sm:text-5xl font-bold animate-bounce ">LATEST BLOGS</h1>
-          <h3 className="text-lg sm:text-2xl font-semibold mt-4 animate-pulse">
-            Your stories. My stories. Lifes unfolding moments.
-          </h3>
-          <p className="mt-3 max-w-[740px] mx-auto text-sm sm:text-base">
-            Welcome to Life Unfolded — a heartfelt space where stories meet
-            reality. This is more than just a blog; its a platform for everyone
-            to share their journey. From the wonder of animals and the serenity
-            of plants to the creativity of arts, the logic of programming
-            languages, and the thrill of traveling — theres a category for every
-            story. Whether youre here to read, reflect, or contribute, this is
-            your space. Add your own real-life stories, connect with others, and
-            explore the beauty of life through shared experiences. Lets create a
-            tapestry of moments together.
+      {/* Hero Content */}
+      <div className="relative z-20 h-full flex flex-col items-center justify-center text-white text-center px-4 sm:px-8 pb-20">
+        <div className="fade-in-up">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm text-xs sm:text-sm text-white/80 mb-5 tracking-widest uppercase">
+            Stories · Life · Moments
+          </span>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold mb-4 leading-tight tracking-tight">
+            Life{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+              Unfolded
+            </span>
+          </h1>
+          <p className="text-base sm:text-lg text-white/70 max-w-xl mx-auto mb-10 leading-relaxed">
+            A heartfelt space where stories meet reality — animals, plants, arts,
+            technology, travel, and everything in between.
           </p>
         </div>
 
-        {/* Subscription Section */}
-        <div className="mt-8 mb-6 lg:mb-10">
+        {/* Subscription Form */}
+        <div className="fade-in-up w-full max-w-md">
           <form
             onSubmit={onSubmitHandler}
-            className="flex justify-between max-w-[500px] mx-auto border shadow-[0_0_15px_5px_rgba(255,255,255,1)] border-white rounded-full overflow-hidden"
+            className="flex gap-0 border border-white/20 rounded-full overflow-hidden bg-white/10 backdrop-blur-md"
           >
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="pl-4 h-12 flex-1 text-black outline-none"
+              placeholder="Enter your email for updates"
+              className="pl-5 h-12 flex-1 bg-transparent text-white placeholder-white/40 outline-none text-sm"
               required
             />
             <button
               type="submit"
-              className="bg-blue-900 text-white px-6 sm:px-8 py-3 hover:bg-black transition-all"
+              disabled={submitting}
+              className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-700 text-white px-6 py-3 transition-all font-medium text-sm whitespace-nowrap"
             >
-              Subscribe
+              {submitting ? "..." : "Subscribe"}
             </button>
           </form>
+          <p className="text-white/30 text-xs mt-2">No spam, unsubscribe anytime.</p>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/30">
+          <div className="w-0.5 h-8 bg-gradient-to-b from-white/50 to-transparent animate-pulse" />
+          <span className="text-xs tracking-widest uppercase">Scroll</span>
         </div>
       </div>
     </div>
