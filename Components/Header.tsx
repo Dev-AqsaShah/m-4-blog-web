@@ -83,7 +83,7 @@ const Header: React.FC = () => {
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
 
       {/* Navbar */}
-      <div className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center px-6 md:px-12 lg:px-20 py-5">
+      <div className="absolute top-0 left-0 right-0 z-30 flex justify-between items-center px-6 md:px-12 lg:px-20 py-5">
         <Link href="/">
           <Image
             src="/assets/logo.png"
