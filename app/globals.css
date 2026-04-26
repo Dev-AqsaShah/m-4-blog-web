@@ -56,13 +56,11 @@ select:focus {
   outline: none;
 }
 
-/* Prevent layout shift from slick slider */
+/* Slick slider full height fix */
 .slick-slider,
 .slick-list,
-.slick-track {
-  height: 100% !important;
-}
-
+.slick-track,
+.slick-slide,
 .slick-slide > div {
   height: 100%;
 }

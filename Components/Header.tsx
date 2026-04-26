@@ -22,15 +22,13 @@ const Header: React.FC = () => {
   const settings = {
     dots: false,
     infinite: true,
-    speed: 1200,
+    speed: 800,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 4000,
     pauseOnHover: false,
     arrows: false,
-    fade: true,
-    cssEase: "ease-in-out",
   };
 
   const slideData: SlideData[] = [
@@ -68,7 +66,7 @@ const Header: React.FC = () => {
       <div className="absolute inset-0 z-0">
         <Slider {...settings}>
           {slideData.map((item) => (
-            <div key={item.id} className="w-full h-screen">
+            <div key={item.id} className="relative w-full h-screen">
               <Image
                 src={item.img}
                 alt={`Slide ${item.id + 1}`}
