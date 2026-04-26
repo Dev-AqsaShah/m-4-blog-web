@@ -13,9 +13,7 @@ const Page: React.FC = () => {
   const [emails, setEmails] = useState<EmailData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = process.env.NEXT_PUBLIC_BASE_URL
-    ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/email`
-    : "/api/email";
+  const API_URL = "/api/email";
 
   const fetchEmails = useCallback(async () => {
     try {
